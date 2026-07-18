@@ -1,0 +1,23 @@
+flowchart TD
+    A([Dataset Loading<br/><i>UCI & Hannousse-Yahiouche</i>]) --> B([Data Preprocessing])
+    B --> C([Stratified 80/20 Train-Test Split<br/><i>fixed random state = 42</i>])
+    C --> D
+
+    subgraph D [Imbalance Treatment Techniques]
+        direction LR
+        T1([Random Oversampling])
+        T2([Random Undersampling])
+        T3([SMOTE])
+        T4([ADASYN])
+        T5([SMOTEENN])
+        T6([SMOTETomek])
+        T7([Cost-Sensitive Learning])
+    end
+
+    D -->|select imbalance technique| E([Learning Algorithm Selection<br/><i>Decision Tree, Random Forest, SVM</i>])
+    E --> F([Model Training<br/><i>stratified 5-fold CV tuning</i>])
+    F --> G([Evaluation on Test Set<br/><i>Precision, Recall, F1, AUC, MCC</i>])
+    G --> H([Result Comparison])
+    H --> I([McNemar's Test<br/><i>statistical significance, p &lt; 0.05</i>])
+
+    F -.->|repeat for every technique x algorithm x dataset| D

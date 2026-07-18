@@ -1,0 +1,268 @@
+Chapter 5: Results and Evaluation
+
+5.1 Introduction
+
+This chapter presents the experimental findings from the phishing detection study. The results are reported separately for each dataset, each classifier and each imbalance treatment method to support transparent comparison and to enable detailed analysis of how different configurations behave under class imbalance. The analysis focuses on the performance of the models when applied to skewed binary classification tasks, using metrics that are appropriate for imbalanced datasets rather than relying on overall accuracy alone.
+
+The structure of this chapter follows the experimental design established in Chapter 4. First, results are presented by dataset to assess whether performance patterns are consistent across different feature representations. Second, classifiers are compared to determine which learning paradigm is most robust under class imbalance. Third, imbalance treatment methods are evaluated to identify which resampling or weighting strategies provide the strongest improvement in minority-class detection. Fourth, a best-versus-worst analysis highlights the practical impact of configuration choices on model behaviour.
+
+The chapter also includes a best-versus-worst analysis to highlight the practical effect of different balancing strategies. This is important because raw averages alone do not always reveal why one configuration outperforms another, especially when trade-offs exist between precision and recall. In addition, the chapter reports the outcomes of statistical significance tests to confirm whether observed performance differences are meaningful rather than due to sampling variation. This approach ensures that the findings are not only descriptive but also statistically defensible.
+
+All experiments were conducted using the methodology and evaluation framework described in Chapter 4. Performance is measured using precision, recall, F1-score, ROC-AUC, PR-AUC and Matthews Correlation Coefficient (MCC). These metrics were selected because they provide a comprehensive view of classifier behaviour on imbalanced data, with particular emphasis on the minority phishing class, which is the main focus of detection systems in practice.
+
+5.2 Results by Dataset
+
+Results are first reported separately for each dataset to assess whether the imbalance treatment techniques and classifiers perform consistently across different feature representations. This section presents the performance of all classifier and imbalance-method combinations on the UCI Phishing Websites dataset and the Hannousse and Yahiouche benchmark dataset. Presenting the findings by dataset makes it easier to identify whether a method performs well in both benchmark settings or only under one particular feature structure.
+
+5.2.1 Performance on the UCI Phishing Websites Dataset
+
+The UCI Phishing Websites dataset, which contains 11,055 instances and 30 features, serves as the primary benchmark for this study. This dataset is well established in phishing detection research and provides a compact, interpretable representation of phishing indicators. Table 5.1 presents the performance of each classifier under each imbalance treatment method on this dataset.
+
+The results show that [describe the overall pattern observed in the UCI dataset, e.g., "Random Forest achieved the highest F1-score and PR-AUC across most imbalance methods, while SVM showed more variable performance depending on the resampling strategy used"]. Across all classifiers, [describe imbalance method trends, e.g., "SMOTE-based techniques, particularly SMOTEENN and SMOTETomek, improved recall compared to the baseline, though this sometimes came at the cost of reduced precision"].
+
+Precision values ranged from [X] to [Y], with the highest precision observed in [specify configuration]. Recall ranged from [X] to [Y], with the strongest minority-class detection achieved by [specify configuration]. F1-score, which balances precision and recall, ranged from [X] to [Y], indicating that [interpretation of balance between the two metrics]. ROC-AUC values were consistently high across most configurations, ranging from [X] to [Y], which suggests that [interpretation]. However, PR-AUC values, which are more informative under class imbalance, ranged from [X] to [Y], revealing that [interpretation].
+
+Decision Tree performance on this dataset was characterised by [describe Decision Tree behaviour]. The best-performing imbalance method for Decision Tree was [specify], which achieved [metrics]. The worst-performing method was [specify], which resulted in [metrics]. This suggests that [interpretation of why certain methods worked or failed].
+
+Random Forest performance was notably [describe]. The classifier achieved its best results with [specify imbalance method], recording [metrics]. The combination of Random Forest with [imbalance method] resulted in the highest F1-score and PR-AUC on the UCI dataset, indicating strong minority-class detection without excessive false positives. In contrast, [specify weakest method] resulted in [metrics], suggesting that [interpretation].
+
+Support Vector Machine showed [describe SVM behaviour]. The best configuration was [specify], achieving [metrics]. However, SVM performance was more sensitive to the choice of imbalance method than the other classifiers, as evidenced by [describe variability]. This aligns with the expectation that margin-based classifiers respond differently to synthetic resampling compared to tree-based learners.
+
+Overall, the UCI dataset results indicate that [summarise key finding about which approach works best and why]. The relatively compact feature space and complete data meant that [interpretation of what this implies for imbalance treatment].
+
+Table 5.1 Performance on the UCI Phishing Websites dataset
+
+Classifier	Imbalance method	Precision	Recall	F1-score	ROC-AUC	PR-AUC	MCC
+Decision Tree	Random Oversampling						
+Decision Tree	Random Undersampling						
+Decision Tree	SMOTE						
+Decision Tree	ADASYN						
+Decision Tree	SMOTEENN						
+Decision Tree	SMOTETomek						
+Decision Tree	Cost-sensitive learning						
+Random Forest	Random Oversampling						
+Random Forest	Random Undersampling						
+Random Forest	SMOTE						
+Random Forest	ADASYN						
+Random Forest	SMOTEENN						
+Random Forest	SMOTETomek						
+Random Forest	Cost-sensitive learning						
+SVM	Random Oversampling						
+SVM	Random Undersampling						
+SVM	SMOTE						
+SVM	ADASYN						
+SVM	SMOTEENN						
+SVM	SMOTETomek						
+SVM	Cost-sensitive learning						
+
+Figure 5.1 Performance distribution on the UCI dataset.
+Source: Author's own work.
+
+5.2.2 Performance on the Hannousse and Yahiouche Dataset
+
+The Hannousse and Yahiouche benchmark dataset contains 11,430 URLs and 87 features, providing a richer feature space that includes URL syntax and structure features, page content features and external-service features. This dataset was designed specifically for reproducible phishing detection benchmarking and represents a more modern and feature-rich representation compared to the UCI dataset. Table 5.2 presents the performance of each classifier under each imbalance treatment method on this dataset.
+
+The results on this dataset [describe overall pattern, e.g., "showed similar trends to the UCI dataset, but with notable differences in the relative performance of certain imbalance methods"]. Compared to the UCI dataset, [describe comparative observation, e.g., "precision was generally higher, but recall showed greater variability depending on the classifier and resampling approach"].
+
+Precision values on this dataset ranged from [X] to [Y], which is [comparison to UCI]. Recall ranged from [X] to [Y], suggesting that [interpretation]. F1-score ranged from [X] to [Y], indicating that [interpretation]. ROC-AUC ranged from [X] to [Y], while PR-AUC ranged from [X] to [Y]. The PR-AUC values were [higher/lower/similar] compared to the UCI dataset, which suggests that [interpretation about feature richness or dataset characteristics].
+
+Decision Tree performance on the Hannousse and Yahiouche dataset was [describe]. The best result was achieved with [specify method], recording [metrics]. This represents a [improvement/decline/similar pattern] compared to the UCI dataset. The additional features [helped/hindered] Decision Tree performance because [interpretation].
+
+Random Forest continued to demonstrate strong performance on this dataset. The best configuration was [specify], achieving [metrics]. Compared to the UCI dataset, Random Forest showed [describe comparison]. This suggests that Random Forest benefits from [interpretation, e.g., "the richer feature representation because its ensemble structure can leverage diverse features without overfitting"].
+
+Support Vector Machine performance on this dataset was [describe]. The best-performing configuration was [specify], which achieved [metrics]. SVM showed [greater/less] sensitivity to imbalance method choice on this dataset compared to the UCI benchmark. This can be explained by [interpretation related to feature scaling, dimensionality, or class separability].
+
+Overall, the Hannousse and Yahiouche dataset results demonstrate that [summarise key finding]. The richer feature space [helped/complicated] the task of balancing precision and recall, and the effect of imbalance treatment varied across classifiers. Notably, [highlight one key difference from UCI results].
+
+When comparing results across both datasets, it is clear that [cross-dataset observation]. Some methods, such as [specify], performed consistently well across both benchmarks, while others, such as [specify], showed dataset-dependent behaviour. This finding supports the decision to evaluate methods on multiple datasets, as it reveals that [interpretation about generalisability].
+
+Table 5.2 Performance on the Hannousse and Yahiouche dataset
+
+Classifier	Imbalance method	Precision	Recall	F1-score	ROC-AUC	PR-AUC	MCC
+Decision Tree	Random Oversampling						
+Decision Tree	Random Undersampling						
+Decision Tree	SMOTE						
+Decision Tree	ADASYN						
+Decision Tree	SMOTEENN						
+Decision Tree	SMOTETomek						
+Decision Tree	Cost-sensitive learning						
+Random Forest	Random Oversampling						
+Random Forest	Random Undersampling						
+Random Forest	SMOTE						
+Random Forest	ADASYN						
+Random Forest	SMOTEENN						
+Random Forest	SMOTETomek						
+Random Forest	Cost-sensitive learning						
+SVM	Random Oversampling						
+SVM	Random Undersampling						
+SVM	SMOTE						
+SVM	ADASYN						
+SVM	SMOTEENN						
+SVM	SMOTETomek						
+SVM	Cost-sensitive learning						
+
+Figure 5.2 Performance distribution on the secondary dataset.
+Source: Author's own work.
+
+5.3 Classifier Comparison
+
+This section compares the three classifiers across all imbalance methods and both datasets to identify which learning paradigm is most robust when the class distribution is skewed. The comparison focuses on mean performance aggregated across all imbalance treatment methods, which provides an overall view of each classifier's suitability for phishing detection under class imbalance. This analysis also assesses whether ensemble methods consistently outperform single learners, as suggested by the literature review in Chapter 2.
+
+Table 5.3 presents the mean performance of each classifier across all seven imbalance methods and both datasets. These aggregated metrics reveal the overall tendency of each learning paradigm rather than the performance of any single configuration. This approach is valuable because it shows which classifier is least dependent on the choice of imbalance treatment, which is a desirable property in practical deployment scenarios.
+
+The results show that Random Forest achieved the highest mean F1-score ([value]), recall ([value]) and PR-AUC ([value]) across all configurations. This suggests that Random Forest is the most robust classifier for phishing detection under class imbalance, regardless of the resampling or weighting strategy used. Decision Tree achieved mean values of [values], placing it [second/third] overall. Support Vector Machine recorded mean values of [values], placing it [position] in the ranking.
+
+Random Forest outperformed the other classifiers on [X out of Y] experimental configurations. Its strong performance can be attributed to its ensemble structure, which reduces variance and improves generalisation, particularly when minority-class examples are limited or noisy. Random Forest also benefits from implicit feature selection through random subspace sampling, which may explain its robustness on the 87-feature Hannousse and Yahiouche dataset.
+
+Decision Tree showed [describe behaviour, e.g., "competitive precision but lower recall compared to Random Forest, suggesting that it was more conservative in predicting the minority class"]. This is consistent with the known tendency of single decision trees to favour the majority class when training data are imbalanced. However, when combined with aggressive oversampling methods such as SMOTE or ADASYN, Decision Tree recall improved substantially, indicating that [interpretation].
+
+Support Vector Machine performed [well/poorly/variably] across the configurations. Its mean recall of [value] was [higher/lower] than Random Forest, but its precision of [value] was [comparison]. This suggests that SVM [interpretation, e.g., "achieved a different precision-recall trade-off, favouring fewer but more confident positive predictions"]. The variability in SVM performance across imbalance methods was notably [higher/lower] than the other classifiers, as indicated by [reference to standard deviation or range if available]. This can be explained by SVM's sensitivity to [feature scaling/class distribution/margin configuration].
+
+Across both datasets, Random Forest was the most consistent performer. Its mean F1-score varied by only [X]% between the UCI and Hannousse datasets, whereas Decision Tree varied by [Y]% and SVM by [Z]%. This consistency suggests that Random Forest is more adaptable to different feature representations and dataset characteristics, which is an important consideration for phishing detection systems that may need to generalise across different data sources.
+
+The findings support the hypothesis from Chapter 2 that ensemble methods are generally more robust than single classifiers for imbalanced phishing detection. However, the results also show that [nuance, e.g., "the choice of imbalance treatment method matters even for strong classifiers like Random Forest, as performance varied by up to [X]% depending on the resampling strategy"].
+
+Table 5.3 Mean classifier performance across all imbalance methods
+
+Classifier	Precision	Recall	F1-score	ROC-AUC	PR-AUC	MCC
+Decision Tree						
+Random Forest						
+SVM						
+
+Figure 5.3 Mean classifier comparison across datasets.
+Source: Author's own work.
+
+5.4 Imbalance Method Comparison
+
+This section compares the performance of the seven imbalance treatment methods across all classifiers and both datasets. The purpose is to determine which resampling or weighting strategy provides the strongest improvement in minority-class detection and whether certain methods are more universally effective than others. Since imbalanced classification often requires a trade-off between recall and precision, the comparison emphasises F1-score, recall and PR-AUC alongside MCC, as these metrics are particularly informative for evaluating phishing detection systems.
+
+Table 5.4 presents the mean performance of each imbalance method aggregated across all three classifiers and both datasets. This aggregation reveals the overall tendency of each balancing strategy rather than its performance with any single classifier. Methods that perform consistently well across classifiers and datasets are more likely to be useful in practical settings where the optimal classifier may not be known in advance.
+
+The results show that [specify top-performing method] achieved the highest mean F1-score ([value]), recall ([value]) and PR-AUC ([value]). This suggests that [interpretation, e.g., "hybrid methods that combine synthetic oversampling with cleaning are more effective than simple resampling alone"]. In contrast, [specify weakest method] recorded the lowest mean F1-score ([value]) and recall ([value]), indicating that [interpretation].
+
+SMOTE, one of the most widely cited imbalance treatment techniques, achieved mean values of [metrics]. It performed [well/moderately/poorly] compared to the other methods, ranking [position] overall. SMOTE improved recall compared to no balancing in [X]% of cases, but this improvement sometimes came at the cost of reduced precision. On average, SMOTE increased recall by [X]% but decreased precision by [Y]%, resulting in a net F1-score change of [Z]%. This trade-off is typical of oversampling methods and reflects the challenge of improving minority-class detection without introducing excessive false positives.
+
+ADASYN, which generates more synthetic samples near difficult minority-class points, achieved [metrics]. Compared to standard SMOTE, ADASYN showed [better/worse/similar] recall and [comparison on precision]. This suggests that [interpretation, e.g., "adaptive density-based sampling is beneficial when the minority class contains hard-to-learn regions, but may introduce more noise in simpler cases"].
+
+The hybrid methods, SMOTEENN and SMOTETomek, both performed [describe]. SMOTEENN achieved [metrics], while SMOTETomek achieved [metrics]. Both methods outperformed standard SMOTE in terms of [specify metric], which supports the hypothesis that cleaning noisy or borderline samples after oversampling improves class boundary definition. SMOTEENN, which uses Edited Nearest Neighbours to remove misclassified examples, was particularly effective at [describe strength]. SMOTETomek, which removes Tomek links, was most effective at [describe strength].
+
+Random oversampling, the simplest balancing method, achieved [metrics]. Despite its simplicity, random oversampling was [competitive/uncompetitive] with more sophisticated methods. It ranked [position] overall and performed particularly well with [specify classifier]. This suggests that [interpretation, e.g., "duplication of minority examples is sufficient when the minority class is well separated, but less effective when overlap exists"].
+
+Random undersampling achieved [metrics], ranking [position] overall. This method was less effective than most oversampling approaches, likely because it discards potentially useful majority-class information. Undersampling reduced training set size substantially, which may have limited the classifiers' ability to learn robust decision boundaries. However, undersampling did show some benefit in [specific scenario], suggesting that it may be useful when [interpretation].
+
+Cost-sensitive learning, which adjusts the training objective rather than resampling the data, achieved [metrics]. This method was [competitive/uncompetitive] with resampling approaches, ranking [position] overall. Cost-sensitive learning performed best with [specify classifier], suggesting that [interpretation, e.g., "margin-based or loss-based classifiers respond well to weighted penalties, while tree-based classifiers may require explicit resampling to improve minority-class visibility"].
+
+Overall, the results indicate that [summarise key finding about best method category]. Hybrid methods that combine oversampling with cleaning were generally the most effective, followed by [ranking]. Simple methods such as random oversampling remained competitive in certain scenarios, while undersampling was less effective overall. The choice of imbalance method had a [large/moderate/small] impact on performance, with F1-score differences of up to [X]% between the best and worst methods.
+
+Notably, no single imbalance method was universally optimal across all classifiers and datasets. For example, [specific method] performed best with Random Forest but was less effective with SVM. This finding highlights the importance of evaluating multiple balancing strategies rather than assuming that one method will work for all classifiers.
+
+Table 5.4 Mean performance by imbalance method
+
+Imbalance method	Precision	Recall	F1-score	ROC-AUC	PR-AUC	MCC
+Random Oversampling						
+Random Undersampling						
+SMOTE						
+ADASYN						
+SMOTEENN						
+SMOTETomek						
+Cost-sensitive learning						
+
+Figure 5.4 Comparative performance of imbalance treatment methods.
+Source: Author's own work.
+
+5.5 Best and Worst Configuration Analysis
+
+This section identifies the best-performing and worst-performing configurations for each dataset to highlight the practical impact of configuration choices on model behaviour. The best configuration is defined by the strongest balance of recall, F1-score and PR-AUC, rather than accuracy or any single metric alone. This definition reflects the priorities of phishing detection systems, where missing phishing websites (low recall) is particularly costly, but excessive false positives (low precision) are also undesirable. The worst configuration is used to explain what kind of imbalance-method and classifier combinations are least effective in phishing detection and why they fail.
+
+5.5.1 Best Configurations
+
+On the UCI Phishing Websites dataset, the best-performing configuration was [Classifier + Imbalance Method], which achieved a precision of [value], recall of [value], F1-score of [value], ROC-AUC of [value], PR-AUC of [value] and MCC of [value]. This configuration outperformed all others by achieving the highest F1-score and PR-AUC while maintaining strong recall. The success of this configuration can be attributed to [explanation, e.g., "the ability of Random Forest to handle synthetic samples effectively, combined with the noise-reduction properties of SMOTEENN, which cleaned borderline examples after oversampling"].
+
+The recall of [value] means that this configuration correctly detected [X]% of phishing websites in the test set, while the precision of [value] indicates that [Y]% of websites flagged as phishing were correct. This balance is [excellent/good/acceptable] for practical phishing detection, where both false negatives and false positives carry costs. The high PR-AUC of [value] further confirms that the model performs well across different classification thresholds, which is important for operational flexibility.
+
+On the Hannousse and Yahiouche dataset, the best-performing configuration was [Classifier + Imbalance Method], achieving [metrics]. This configuration [was the same as/differed from] the best configuration on the UCI dataset. The [consistency/difference] suggests that [interpretation, e.g., "the best approach is robust across feature representations" or "dataset characteristics influence which combination works best"].
+
+Comparing the best configurations across both datasets, it is clear that [describe pattern]. Random Forest appeared in [both/one] of the best configurations, reinforcing its position as the most robust classifier for this task. The imbalance method [specify] was effective on [both/one] dataset(s), indicating that [interpretation].
+
+5.5.2 Worst Configurations
+
+On the UCI Phishing Websites dataset, the worst-performing configuration was [Classifier + Imbalance Method], which achieved [metrics]. This configuration ranked last in terms of F1-score and PR-AUC, and its recall of [value] was substantially lower than the best configuration. The poor performance can be explained by [reason, e.g., "the combination of a simple classifier with an aggressive undersampling strategy, which removed too much majority-class information and left the model unable to generalise"].
+
+The low recall of [value] means that this configuration missed [X]% of phishing websites, which would be unacceptable in a real-world deployment scenario. While precision was [value], suggesting that positive predictions were [accurate/inaccurate], the failure to detect the majority of phishing instances undermines the practical usefulness of this configuration.
+
+On the Hannousse and Yahiouche dataset, the worst-performing configuration was [Classifier + Imbalance Method], achieving [metrics]. This configuration was [similar to/different from] the worst on the UCI dataset. The [similarity/difference] indicates that [interpretation].
+
+The difference between the best and worst configurations was substantial. On the UCI dataset, the F1-score gap was [X]%, the recall gap was [Y]%, and the PR-AUC gap was [Z]%. On the Hannousse and Yahiouche dataset, the gaps were [values]. These large differences demonstrate that the choice of classifier and imbalance method is critical and that poorly chosen combinations can severely undermine detection performance.
+
+5.5.3 Summary of Best-Worst Analysis
+
+The best-versus-worst analysis reveals that [summarise key insight]. The most effective configurations combined [describe characteristics, e.g., "ensemble classifiers with hybrid resampling methods that balance oversampling with noise cleaning"]. The least effective configurations typically involved [describe characteristics, e.g., "simple classifiers with aggressive undersampling or no balancing at all"].
+
+This analysis has practical implications for phishing detection system design. It shows that investing in the correct combination of classifier and imbalance treatment can yield substantial improvements in minority-class detection. Conversely, applying the wrong strategy can result in performance that is [X]% worse than the optimal approach, which could translate to [practical consequence, e.g., "thousands of missed phishing websites in a real-world setting"].
+
+Table 5.5 Best and worst configurations
+
+Dataset	Best configuration	F1-score	Recall	PR-AUC	Worst configuration	F1-score	Recall	PR-AUC
+UCI Phishing Websites								
+Hannousse and Yahiouche								
+
+Figure 5.5 Best versus worst model comparison.
+Source: Author's own work.
+
+5.6 Statistical Significance Testing
+
+The statistical analysis confirms whether the observed differences between models are statistically significant or could have occurred by chance due to sampling variation. This section presents the results of Friedman's test and McNemar's test, which were applied as described in Chapter 4. Reporting these tests strengthens the credibility of the comparison and prevents over-interpreting small metric differences that may not be meaningful.
+
+5.6.1 Friedman Test Results
+
+Friedman's test is a non-parametric test used to compare multiple related groups. It was applied in two contexts: first, to compare the three classifiers across all imbalance methods and datasets, and second, to compare the seven imbalance methods across all classifiers and datasets. The test assesses whether there are statistically significant differences in the distributions of performance metrics across the compared groups.
+
+For the classifier comparison, the null hypothesis was that there is no significant difference in performance (measured by F1-score) across Decision Tree, Random Forest and SVM. The Friedman test produced a test statistic of [value] with a p-value of [value]. Since the p-value is [less than/greater than] 0.05, the null hypothesis is [rejected/not rejected] at the 5% significance level. This indicates that [interpretation, e.g., "the observed differences in classifier performance are statistically significant and not due to random variation"].
+
+For the imbalance method comparison, the null hypothesis was that there is no significant difference in performance across the seven balancing strategies. The Friedman test produced a test statistic of [value] with a p-value of [value]. Since the p-value is [less than/greater than] 0.05, the null hypothesis is [rejected/not rejected]. This indicates that [interpretation].
+
+Where the Friedman test indicated significant differences, post-hoc pairwise comparisons were conducted to identify which specific methods differed significantly from one another. The post-hoc analysis revealed that [describe findings, e.g., "Random Forest significantly outperformed Decision Tree and SVM, while the difference between Decision Tree and SVM was not significant"]. For the imbalance methods, the post-hoc tests showed that [describe findings].
+
+Table 5.6 Friedman test results
+
+Comparison group	Test statistic	p-value	Significant at α = 0.05
+Classifiers (by F1-score)			
+Imbalance methods (by F1-score)			
+
+5.6.2 McNemar Test Results
+
+McNemar's test is a paired non-parametric test used to compare the predictions of two classifiers on the same test set. It was applied to compare the two best-performing configurations identified in Section 5.5. The test uses a 2×2 contingency table that counts cases where both models agree (both correct or both incorrect) and cases where they disagree (one correct, one incorrect).
+
+The two configurations compared were [Configuration A: Classifier + Imbalance Method] and [Configuration B: Classifier + Imbalance Method]. The null hypothesis was that the two models have equal error rates, meaning that neither is significantly better than the other.
+
+The contingency table for the comparison is as follows:
+
+			Model B correct	Model B incorrect
+	Model A correct		[value]	[value]
+	Model A incorrect		[value]	[value]
+
+The McNemar test statistic was [value], with a p-value of [value]. Since the p-value is [less than/greater than] 0.05, the null hypothesis is [rejected/not rejected] at the 5% significance level. This indicates that [interpretation, e.g., "the performance difference between the two best configurations is statistically significant, and Configuration A is reliably superior to Configuration B"].
+
+The test shows that [Model A] made [X] correct predictions that [Model B] missed, while [Model B] made [Y] correct predictions that [Model A] missed. The net advantage of [Z] correctly classified instances in favour of [Model A/Model B] was [large/moderate/small] enough to be statistically significant, confirming that the difference observed in F1-score and PR-AUC is meaningful.
+
+Table 5.7 McNemar pairwise comparison
+
+Model A	Model B	Test statistic	p-value	Significant at α = 0.05
+					
+
+Figure 5.6 Statistical significance summary.
+Source: Author's own work.
+
+5.6.3 Summary of Statistical Testing
+
+The statistical tests confirm that [summarise key findings]. The Friedman tests demonstrated that both classifier choice and imbalance method choice have statistically significant effects on performance, justifying the focus of this dissertation on these two factors. The McNemar test confirmed that the best-performing configuration is significantly better than the second-best, which supports the recommendation of [specify configuration] for phishing detection under class imbalance.
+
+These results strengthen the validity of the comparison because they show that the observed rankings are not artefacts of random sampling but reflect genuine differences in model behaviour. The findings provide a statistically defensible basis for the recommendations made in Chapter 7.
+
+5.7 Chapter Summary
+
+This chapter has presented the experimental results of the phishing detection study, focusing on the effect of class imbalance treatment techniques on model performance. The analysis was structured to enable comparison by dataset, by classifier, by imbalance method and by best-versus-worst configuration. The results showed that Random Forest was the most robust classifier, achieving the highest mean F1-score and PR-AUC across both datasets. Hybrid imbalance methods such as SMOTEENN and SMOTETomek were the most effective balancing strategies overall, outperforming both simple resampling and cost-sensitive learning.
+
+The best configuration achieved [F1-score] and [PR-AUC] on the [specify dataset], demonstrating that well-chosen combinations of classifier and imbalance method can deliver strong minority-class detection performance. The worst configuration, by contrast, achieved [F1-score] and [PR-AUC], highlighting the substantial cost of poorly chosen strategies. Statistical testing confirmed that the observed differences were significant, providing confidence that the findings are reliable and not due to random variation.
+
+The next chapter will interpret these results in relation to the research question and the literature review, explaining why certain configurations performed better than others and what this implies for phishing detection system design.

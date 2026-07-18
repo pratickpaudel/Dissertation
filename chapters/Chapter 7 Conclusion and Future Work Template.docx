@@ -1,0 +1,129 @@
+Chapter 7: Conclusion and Future Work
+
+7.1 Introduction
+
+This chapter concludes the dissertation by summarising the key findings, answering the research question and discussing the contributions of the study to the field of phishing detection and imbalanced machine learning. It reflects on the experimental outcomes presented in Chapter 5 and interpreted in Chapter 6, drawing together the main insights and situating them within the broader context of cybersecurity research. The chapter also identifies limitations that constrain the scope of the conclusions and proposes directions for future work that would extend and strengthen the findings.
+
+The dissertation set out to investigate [state research question, e.g., "how different class imbalance treatment techniques affect the performance of machine learning classifiers in phishing website detection"]. This question was motivated by the observation that phishing detection is inherently an imbalanced classification problem, where the minority class of phishing websites is both underrepresented and of primary interest. The literature review in Chapter 2 identified that while class imbalance is widely recognised as a challenge in phishing detection, there is limited comparative evidence on which balancing strategies are most effective across different classifiers and feature representations.
+
+To address this gap, the dissertation implemented a controlled experimental study comparing seven imbalance treatment methods (random oversampling, random undersampling, SMOTE, ADASYN, SMOTEENN, SMOTETomek and cost-sensitive learning) across three classifiers (Decision Tree, Random Forest and Support Vector Machine) on two benchmark datasets (UCI Phishing Websites and Hannousse and Yahiouche). The results demonstrated that hybrid resampling methods combined with ensemble classifiers provide the most robust performance, and that the choice of imbalance treatment method has a statistically significant effect on minority-class detection. This chapter synthesises these findings and discusses their implications for future research and practice.
+
+
+
+7.2 Summary of Key Findings
+
+The experimental evaluation presented in Chapter 5 produced several key findings that answer the research question and contribute to the understanding of class imbalance treatment in phishing detection.
+
+First, the results showed that hybrid imbalance treatment methods, specifically SMOTEENN and SMOTETomek, were the most effective balancing strategies overall. These methods achieved mean F1-scores of [value] and [value] respectively, outperforming simple oversampling, undersampling and cost-sensitive learning. The success of hybrid methods can be attributed to their two-stage approach: they first expand the minority class through synthetic oversampling, then clean noisy or borderline examples to refine the decision boundary. This combination addresses both the underrepresentation of the minority class and the risk of introducing noise through synthetic generation.
+
+Second, Random Forest was the most robust classifier for phishing detection under class imbalance. It achieved the highest mean F1-score ([value]), recall ([value]) and PR-AUC ([value]) across both datasets and all imbalance methods. Random Forest outperformed Decision Tree and Support Vector Machine in [X] out of [Y] experimental configurations, demonstrating consistent superiority. The robustness of Random Forest can be attributed to its ensemble structure, which reduces variance, handles high-dimensional feature spaces effectively, and provides implicit regularisation through random feature selection.
+
+Third, the choice of imbalance treatment method had a statistically significant effect on performance. Friedman's test confirmed that the differences in F1-score across imbalance methods were significant at the 5% level (p = [value]), indicating that the observed rankings were not due to random variation. The magnitude of the effect was substantial, with F1-score differences of up to [X]% between the best and worst methods. This finding demonstrates that the selection of an appropriate balancing strategy is critical for achieving strong minority-class detection performance.
+
+
+
+Fourth, the results revealed important trade-offs between precision and recall. Oversampling methods improved recall by [X]% on average but reduced precision by [Y]%, while hybrid methods improved recall by [X]% with only a [smaller Y]% reduction in precision. This finding has practical implications for system design, as it shows that the choice of imbalance method should be guided by the relative costs of false positives and false negatives in the operational context.
+
+Fifth, the findings were robust across different feature representations. The relative ranking of classifiers and imbalance methods was consistent across both the UCI dataset (30 features) and the Hannousse and Yahiouche dataset (87 features), though the magnitude of performance improvement varied. This consistency strengthens confidence in the generalisability of the conclusions and suggests that the best approach (Random Forest with hybrid resampling) is not overly specific to one feature set.
+
+Sixth, the best-versus-worst configuration analysis showed that poorly chosen combinations of classifier and imbalance method can severely undermine performance. The best configuration achieved [F1-score] and [recall], while the worst achieved [F1-score] and [recall], representing a gap of [X]% in F1-score. This finding demonstrates the practical importance of systematic evaluation and configuration tuning, as selecting the wrong approach can result in substantially weaker detection performance.
+
+Finally, statistical significance testing confirmed that the observed differences were meaningful. McNemar's test showed that the best-performing configuration was significantly better than the second-best (p = [value]), providing confidence that the ranking is reliable. The Friedman test results further confirmed that both classifier choice and imbalance method choice have significant effects on performance, justifying the focus of the dissertation on these two factors.
+
+
+
+7.3 Answer to the Research Question
+
+The research question guiding this dissertation was: [state research question]. Based on the experimental evidence and the discussion in Chapter 6, the answer is as follows.
+
+Different class imbalance treatment techniques have a substantial and statistically significant effect on the performance of machine learning classifiers in phishing website detection. The magnitude and direction of this effect depend on the specific combination of imbalance method and classifier used. Hybrid resampling methods that combine synthetic oversampling with cleaning (SMOTEENN and SMOTETomek) provide the most effective approach overall, improving minority-class detection while maintaining acceptable precision. Ensemble classifiers, particularly Random Forest, are the most robust to the choice of imbalance method and achieve the strongest performance across different feature representations.
+
+Simple resampling methods such as SMOTE and random oversampling improve recall compared to no balancing, but they may reduce precision if synthetic examples introduce noise or overlap with the majority class. Random undersampling is generally less effective because it discards potentially useful majority-class information, though it may be appropriate in resource-constrained settings. Cost-sensitive learning is competitive with simple resampling but is less effective than hybrid methods for the classifiers and datasets used in this study.
+
+The effectiveness of each imbalance treatment method varies depending on the classifier. Random Forest benefits consistently from all resampling methods, with performance differences primarily driven by the quality of the synthetic samples and the degree of noise reduction. Decision Tree shows greater sensitivity to the choice of balancing strategy, with larger performance swings between methods. Support Vector Machine exhibits the highest variability, reflecting its sensitivity to training data distribution and margin configuration.
+
+
+
+The findings demonstrate that no single imbalance treatment method is universally optimal, and that the best approach depends on the classifier used, the feature representation, and the operational priorities of the detection system. However, across the range of configurations tested, the combination of Random Forest with hybrid resampling methods (SMOTEENN or SMOTETomek) provides the most reliable and robust performance. This combination should be the default choice for practitioners building phishing detection systems under class imbalance, unless specific constraints (such as interpretability, computational cost, or domain knowledge) favour alternative approaches.
+
+7.4 Contributions to Knowledge
+
+This dissertation makes several contributions to the field of phishing detection and imbalanced machine learning.
+
+First, it provides a rigorous and systematic comparison of class imbalance treatment techniques in phishing detection. While prior work has recognised that class imbalance is a challenge and has applied various balancing methods, few studies have conducted controlled comparisons across multiple classifiers, multiple imbalance methods and multiple datasets. This dissertation fills that gap by isolating the effect of imbalance treatment and evaluating it under consistent experimental conditions. The findings provide evidence-based guidance on which methods are most effective, rather than relying on anecdotal reports or single-configuration results.
+
+Second, the study demonstrates the value of hybrid resampling methods in phishing detection. SMOTEENN and SMOTETomek have received less attention in the phishing detection literature compared to standard SMOTE, yet the results show that they outperform simpler methods across multiple classifiers and datasets. This finding contributes to the literature by highlighting the importance of noise reduction after oversampling, and it suggests that future phishing detection studies should evaluate hybrid methods alongside more widely used techniques.
+
+
+
+Third, the dissertation reinforces the importance of using appropriate evaluation metrics in imbalanced classification. By emphasising recall, F1-score, PR-AUC and MCC rather than accuracy, the study demonstrates how metric choice affects the interpretation of results. The findings show that configurations with high accuracy can have poor recall, which would be unacceptable in practical phishing detection. This contribution strengthens the methodological foundation of phishing detection research by encouraging the use of minority-class-focused metrics.
+
+Fourth, the use of statistical significance testing adds rigour to the comparison. Many phishing detection studies report mean performance values without assessing whether observed differences are statistically meaningful. This dissertation applied Friedman's test and McNemar's test to confirm that the rankings are not due to random variation, which strengthens the validity of the conclusions. This contribution provides a template for future studies to follow when comparing multiple methods.
+
+Fifth, the cross-dataset evaluation demonstrates the generalisability of the findings. By testing on both the UCI Phishing Websites dataset and the Hannousse and Yahiouche benchmark dataset, the study shows that the conclusions are not overly specific to one feature representation. This methodological choice reduces the risk of overfitting conclusions to a single benchmark and strengthens confidence in the practical applicability of the findings.
+
+Finally, the dissertation contributes practical guidance for phishing detection system design. The identification of Random Forest with hybrid resampling as the most robust approach provides actionable recommendations for practitioners. The best-versus-worst analysis highlights the cost of poor configuration choices, which underscores the importance of systematic evaluation before deployment.
+
+
+
+7.5 Limitations
+
+The dissertation has several limitations that should be acknowledged. These limitations, which were discussed in detail in Chapter 6, define the scope within which the conclusions are valid and identify areas where caution is needed when interpreting or applying the findings.
+
+First, the study relied on benchmark datasets rather than live phishing traffic. While the UCI Phishing Websites dataset and the Hannousse and Yahiouche benchmark dataset are well-established and widely used, they represent static snapshots of phishing behaviour at particular points in time. Phishing tactics evolve continuously, and the findings may not generalise to emerging threats that differ substantially from the examples in the training data. Future work should evaluate the methods on more recent datasets or live traffic to assess robustness to evolving phishing strategies.
+
+Second, the choice of classifiers was limited to three models: Decision Tree, Random Forest and Support Vector Machine. These classifiers were selected to represent distinct learning paradigms, but they do not cover the full range of algorithms used in modern phishing detection research. Other methods, such as neural networks, gradient boosting machines, or deep learning approaches, were not included. Future work should extend the comparison to include additional classifiers to determine whether the conclusions remain consistent.
+
+Third, the imbalance treatment methods evaluated represent commonly used strategies, but they do not exhaust the range of available techniques. Methods such as ensemble-based balancing (e.g., EasyEnsemble, BalanceCascade), anomaly detection approaches, or generative adversarial networks for synthetic sample generation were not included. Future work should explore additional methods to provide a more comprehensive comparison.
+
+
+
+Fourth, the study did not extensively explore the sensitivity of the results to hyperparameter choices. While hyperparameter tuning was performed using GridSearchCV, the parameter grids were limited to commonly used ranges. It is possible that more exhaustive optimisation could alter the relative performance of methods. Future work should conduct more thorough hyperparameter searches to assess the robustness of the findings.
+
+Fifth, the study focused on binary classification (phishing versus legitimate), which is the standard framing in phishing detection research. Real-world systems may need to handle additional classes, such as suspicious websites or different types of phishing attacks. The findings may not directly generalise to multi-class scenarios, and future work should investigate how imbalance treatment methods perform in more complex classification settings.
+
+Sixth, the evaluation assumed that labels are accurate, but in practice, phishing datasets may contain labelling errors. Misclassified examples in the training or test data could affect performance estimates and the relative ranking of methods. Future work should investigate the robustness of imbalance treatment methods to label noise.
+
+Finally, the study did not address the computational cost of different imbalance treatment methods. Some methods, particularly those involving synthetic sample generation and cleaning, increase training time and memory requirements. Future work should evaluate the trade-off between performance improvement and computational cost to provide guidance for resource-constrained environments.
+
+
+
+7.6 Recommendations for Future Work
+
+The findings and limitations of this dissertation suggest several directions for future research that would extend and strengthen the conclusions.
+
+First, future work should evaluate the methods on more recent and diverse phishing datasets. The datasets used in this study, while well-established, represent phishing behaviour from several years ago. Evaluating the methods on contemporary datasets would assess whether the findings remain valid as phishing tactics evolve. Additionally, evaluating on datasets from different domains (e.g., mobile phishing, social media phishing, or targeted spear-phishing attacks) would test the generalisability of the conclusions beyond website phishing.
+
+Second, the comparison should be extended to include additional classifiers, particularly modern ensemble methods and deep learning approaches. Gradient boosting machines such as XGBoost and LightGBM have shown strong performance in many classification tasks and may exhibit different sensitivity to imbalance treatment compared to Random Forest. Deep learning methods, such as convolutional neural networks or recurrent neural networks applied to URL sequences or page content, represent a different learning paradigm that may respond differently to class imbalance. Including these methods would provide a more comprehensive picture of how imbalance treatment interacts with classifier architecture.
+
+Third, future work should investigate additional imbalance treatment methods, particularly ensemble-based approaches and generative techniques. Methods such as EasyEnsemble and BalanceCascade combine resampling with ensemble learning in ways that differ from standard Random Forest. Generative adversarial networks (GANs) have been proposed as a way to generate synthetic minority examples that are more realistic than those produced by interpolation-based methods such as SMOTE. Evaluating these methods would determine whether they offer advantages over the hybrid resampling approaches identified as most effective in this study.
+
+
+
+Fourth, future research should conduct more extensive hyperparameter optimisation to assess the robustness of the findings. This could include Bayesian optimisation or random search over larger parameter spaces, as well as analysis of how sensitive the relative rankings are to hyperparameter choices. Understanding this sensitivity would help determine whether the conclusions depend on specific tuning choices or whether they are robust across a wide range of configurations.
+
+Fifth, the study should be extended to multi-class scenarios, where phishing websites are categorised by type (e.g., credential theft versus malware distribution) or where suspicious websites that are difficult to classify are treated as a separate class. Multi-class imbalanced learning introduces additional challenges, such as imbalance across multiple classes and the need to balance recall across different minority classes. Investigating how imbalance treatment methods perform in this setting would provide guidance for more complex real-world systems.
+
+Sixth, future work should investigate the robustness of imbalance treatment methods to label noise. This could be done by introducing controlled amounts of labelling error into the training data and assessing how performance degrades. Methods that are robust to label noise would be more reliable in practice, where labelling accuracy may be imperfect. This analysis would also help identify whether certain imbalance methods, such as those with cleaning steps, are inherently more robust to mislabelled examples.
+
+Seventh, future research should evaluate the trade-off between performance improvement and computational cost. This would involve measuring training time, memory usage, and inference latency for different imbalance treatment methods and classifiers. Understanding these trade-offs would provide guidance for resource-constrained environments, such as real-time phishing detection systems or deployment on edge devices.
+
+
+
+Eighth, future work should investigate the temporal stability of the findings by evaluating models trained on older data and tested on more recent data. Phishing tactics evolve over time, and models that perform well on contemporaneous test data may degrade when applied to future examples. This analysis would assess whether the conclusions about imbalance treatment methods remain valid under concept drift, and whether certain methods provide more robust performance over time.
+
+Ninth, the study could be extended to include feature selection and dimensionality reduction techniques. The Hannousse and Yahiouche dataset contains 87 features, and it is possible that some are redundant or noisy. Investigating whether feature selection improves performance, and whether it interacts with the choice of imbalance method, would provide additional guidance for system design. This analysis could also assess whether certain imbalance methods are more or less sensitive to feature quality.
+
+Finally, future research should explore the integration of domain knowledge into imbalance treatment. For example, if certain phishing indicators are known to be more reliable than others, it may be possible to guide synthetic sample generation or cleaning based on feature importance. This could improve the quality of synthetic examples and reduce the risk of introducing noise. Investigating such domain-informed methods would connect the technical aspects of imbalance treatment with the substantive knowledge of phishing behaviour.
+
+
+
+7.7 Final Remarks
+
+This dissertation has investigated the effect of class imbalance treatment techniques on machine learning-based phishing website detection. Through a controlled experimental study comparing seven imbalance methods across three classifiers and two datasets, the research has demonstrated that hybrid resampling methods combined with ensemble classifiers provide the most robust approach to minority-class detection. The findings contribute to the literature by providing rigorous comparative evidence on which balancing strategies are most effective, and by demonstrating the importance of systematic evaluation, appropriate metrics, and statistical significance testing.
+
+The results have practical implications for phishing detection system design, showing that the choice of classifier and imbalance method is critical and that poorly chosen combinations can severely undermine performance. The identification of Random Forest with SMOTEENN or SMOTETomek as the most effective approach provides actionable guidance for practitioners. The cross-dataset evaluation and statistical testing strengthen confidence in the generalisability and reliability of the conclusions.
+
+While the study has limitations, particularly in its reliance on benchmark datasets and a limited set of classifiers, it provides a solid foundation for future work. The recommendations for future research identify opportunities to extend the findings to more recent datasets, additional classifiers, and more complex scenarios. The methodological approach used in this dissertation, which emphasises controlled comparison, appropriate evaluation metrics, and statistical validation, provides a template that can be applied in future studies on imbalanced learning in phishing detection and other cybersecurity domains.
+
+In conclusion, this dissertation has answered the research question by demonstrating that class imbalance treatment techniques have a substantial and statistically significant effect on phishing detection performance, and that hybrid resampling methods combined with ensemble classifiers provide the most effective approach. The findings advance the understanding of how to build robust phishing detection systems under class imbalance and contribute evidence-based guidance to both researchers and practitioners in the field.

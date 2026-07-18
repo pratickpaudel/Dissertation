@@ -1,0 +1,258 @@
+Chapter 4: Design and Implementation
+
+4.1 Introduction
+
+This chapter describes the design and implementation of the phishing detection system developed for this dissertation. The system is implemented as an experimental pipeline rather than a production deployment tool, because the aim of the study is to compare the effect of class imbalance treatment techniques on machine learning-based phishing website detection. The design therefore focuses on reproducibility, fair comparison and controlled evaluation across multiple datasets and classifiers.Draft-Final-Version.docx
+
+The implementation follows the methodology established in the previous chapter. In particular, the system is structured so that imbalance treatment methods are applied only to the training data, while the test data remain untouched until final evaluation. This approach ensures that the results reflect genuine model performance rather than artefacts introduced by data leakage or inconsistent preprocessing.machinelearningmasteryDraft-Final-Version.docx
+
+4.2 System Architecture
+
+The system is organised as a modular pipeline with five main stages: data loading, preprocessing, imbalance treatment, model training and performance evaluation. This structure supports consistent evaluation because each imbalance treatment technique is assessed under the same overall experimental conditions. It also makes the workflow easier to reproduce and extend, since each stage can be adjusted independently without altering the rest of the pipeline.Draft-Final-Version.docx
+
+The design was intentionally kept simple and modular because the dissertation is focused on controlled experimentation rather than on building a production-grade phishing detection tool. A modular pipeline is suitable for this purpose because it allows the same logic to be reused across all experiment combinations. It also makes it straightforward to add future techniques or classifiers if the project is extended later.Draft-Final-Version.docx
+
+Figure 4.1 System architecture of the phishing detection pipeline.
+Source: Author's own work.
+
+4.3 Dataset Design
+
+Two datasets are used in the implementation. The first is the UCI Phishing Websites dataset, which contains 11,055 instances and 30 features. It is a widely used benchmark in phishing detection research and includes structural and lexical indicators that can be used to identify phishing websites. The dataset is complete and does not contain missing values, which makes it suitable for controlled machine learning experiments.archive.ics.uciDraft-Final-Version.docx
+
+The second dataset is the benchmark dataset proposed by Hannousse and Yahiouche, which contains 11,430 URLs and 87 extracted features. These are divided into URL syntax and structure features, page content features and external-service features. The dataset was designed for reproducible phishing detection benchmarking and provides a richer feature space for comparative analysis.Draft-Final-Version.docx
+
+Using both datasets improves the design of the study because it allows the comparison of imbalance treatment techniques across different benchmark settings. The UCI dataset provides a compact and widely cited baseline, while the Hannousse and Yahiouche dataset provides a richer feature space and a more modern benchmark structure. This combination supports cross-dataset interpretation and reduces the risk that the findings are specific to only one representation. Using two datasets enables external validation of the findings and reduces the likelihood that conclusions are specific to the characteristics of a single benchmark dataset.Draft-Final-Version.docx
+
+Table 4.1 Dataset summary
+
+	Dataset
+
+	Instances
+
+	Features
+
+	Key characteristics
+
+
+	UCI Phishing Websites
+
+	11,055
+
+	30
+
+	Complete, widely used benchmark, structural and lexical indicators
+
+
+	Hannousse and Yahiouche benchmark dataset
+
+	11,430
+
+	87
+
+	Reproducible benchmark, URL, content and external-service features
+
+
+
+
+4.4 Data Preprocessing
+
+The preprocessing stage begins with loading both datasets into the experimental environment and checking their structure. For the UCI dataset, this involves verifying the labels, checking for duplicates and confirming that all 30 attributes are correctly encoded. For the Hannousse and Yahiouche dataset, preprocessing includes removing any URL identifiers that are not required for modelling and confirming that feature values are suitable for input to the classifiers.Draft-Final-Version.docx
+
+The datasets are then split into training and test subsets using stratified sampling. Stratification is essential because it preserves the class distribution in both sets and ensures that the minority class remains visible in the test data. This is particularly important in an imbalanced classification task such as phishing detection, where the minority class is the main class of interest. The test set is held back throughout all balancing procedures so that performance evaluation remains unbiased. All experiments use a fixed random seed (random_state=42) to ensure reproducibility across runs.machinelearningmastery
+
+Where feature scaling is needed, it is applied only after splitting and only using statistics derived from the training data. This is especially relevant for the Support Vector Machine classifier, which is sensitive to feature magnitude. Tree-based models such as Decision Tree and Random Forest are generally less dependent on scaling, but the same preprocessing logic is maintained across all experiments.Draft-Final-Version.docx
+
+Figure 4.2 Preprocessing workflow for both datasets.
+Source: Author's own work.
+
+4.5 Cross-Validation and Tuning
+
+Model selection and hyperparameter optimisation are performed using stratified 5-fold cross-validation on the training data. This is necessary because standard k-fold cross-validation can give misleading estimates on imbalanced datasets, whereas stratified folds preserve the class distribution in each split. The final model for each experimental configuration is then retrained on the full training set and evaluated once on the held-out test set.pmc.ncbi.nlm.nih+1
+
+Hyperparameter tuning is carried out using GridSearchCV for the main classifiers. This method performs exhaustive search over specified parameter values using cross-validated scoring, and its cv option can use stratified splitting for classification tasks. This makes it appropriate for controlled model comparison because the parameter search itself is conducted under the same cross-validation framework as model evaluation. For Decision Tree, the tuned parameters include max_depth, min_samples_split and criterion. For Random Forest, n_estimators, max_depth and max_features are optimised. For Support Vector Machine, the grid search covers C, gamma and kernel type. These parameters were selected because they directly influence model complexity, generalisation and sensitivity to class imbalance.scikit-learn
+
+To reduce the risk of optimistic bias, any resampling method such as SMOTE or SMOTEENN is applied inside the cross-validation process rather than before it. This ensures that synthetic examples are created only from training folds and not from the validation folds. The implementation will use an imblearn.pipeline.Pipeline so that preprocessing, resampling and model training are executed sequentially within each cross-validation fold. This ensures that resampling is applied exclusively to the training partition of each fold and prevents information leakage into validation data. In this way, the validation process remains realistic and free from data leakage.machinelearningmastery
+
+4.6 Imbalance Treatment Design
+
+The implementation evaluates several class imbalance treatment techniques so that the dissertation can compare different balancing strategies under a common framework. These include random oversampling, random undersampling, SMOTE, ADASYN, SMOTEENN, SMOTETomek and cost-sensitive learning. This range of techniques reflects the main imbalance treatment categories discussed in the literature: simple resampling, synthetic oversampling, hybrid cleaning methods and algorithm-level weighting.imbalanced-learn+1Draft-Final-Version.docx
+
+Random oversampling is implemented by duplicating minority-class samples until the class distribution becomes more balanced. Random undersampling reduces the majority class by removing selected majority instances. SMOTE creates synthetic minority examples by interpolating between nearby minority neighbours, which helps increase the diversity of the minority class. The original SMOTE method was introduced by Chawla et al. as a synthetic oversampling technique for imbalanced learning.cmu+1
+
+ADASYN is similar to SMOTE, but it focuses more heavily on minority points that are harder to learn. It was proposed by He et al. as an adaptive extension that shifts more emphasis toward difficult minority examples.semanticscholar
+
+SMOTEENN and SMOTETomek are hybrid techniques that combine oversampling with cleaning. SMOTEENN integrates SMOTE with Edited Nearest Neighbours, while SMOTETomek combines SMOTE with Tomek link removal. These techniques are available in the imbalanced-learn toolkit and are commonly used to reduce noise and refine the class boundary after oversampling. In the implementation, these methods are applied only to the training portion of each fold.imbalanced-learn+1
+
+Cost-sensitive learning is implemented differently from the resampling approaches. Instead of changing the data distribution, it changes the training objective by assigning a higher penalty to minority-class errors. This makes it possible to address imbalance without generating synthetic samples. The use of cost-sensitive learning is particularly useful as a comparison point because it allows the study to assess whether data-level balancing or algorithm-level weighting is more effective for phishing detection.semanticscholarDraft-Final-Version.docx
+
+Table 4.2 Imbalance treatment methods
+
+	Method
+
+	Category
+
+	Core idea
+
+
+	Random Oversampling
+
+	Data-level
+
+	Duplicate minority instances
+
+
+	Random Undersampling
+
+	Data-level
+
+	Remove majority instances
+
+
+	SMOTE
+
+	Data-level
+
+	Generate synthetic minority samples
+
+
+	ADASYN
+
+	Data-level
+
+	Generate more samples near difficult minority points
+
+
+	SMOTEENN
+
+	Hybrid
+
+	SMOTE + Edited Nearest Neighbours
+
+
+	SMOTETomek
+
+	Hybrid
+
+	SMOTE + Tomek link cleaning
+
+
+	Cost-sensitive learning
+
+	Algorithm-level
+
+	Penalise minority-class errors more heavily
+
+
+
+
+4.7 Machine Learning Model Design
+
+Three classifiers are used in the implementation: Decision Tree, Random Forest and Support Vector Machine. These models were selected because they represent distinct learning paradigms and are likely to respond differently to imbalance treatment. Decision Tree provides a transparent baseline, Random Forest represents a strong ensemble method, and Support Vector Machine offers a margin-based alternative that is often sensitive to class imbalance and feature scaling.Draft-Final-Version.docx
+
+Decision Tree is useful for examining how imbalance treatment affects simple rule-based decision boundaries. Random Forest is included because it has strong empirical performance in phishing detection studies and benefits from ensemble averaging. Support Vector Machine is included because it provides a different type of decision boundary and often reacts differently to class balancing methods than tree-based learners. This variety makes the comparison more meaningful and strengthens the methodological contribution of the dissertation.Draft-Final-Version.docx
+
+The models are trained separately on each imbalance-treated version of the training data. This means that the same classifier is tested across multiple balancing methods and both datasets, allowing direct comparison of performance. Because the design isolates the effect of the imbalance treatment, any differences in output can be interpreted more confidently as consequences of the balancing strategy rather than unrelated implementation variation.Draft-Final-Version.docx
+
+Figure 4.3 Classifier comparison within the experimental pipeline.
+Source: Author's own work.
+
+4.8 Performance Evaluation Design
+
+The evaluation design uses metrics that are suitable for imbalanced classification. Accuracy is not used as the main measure because it can be misleading when the majority class dominates. Instead, the study reports precision, recall, F1-score, ROC-AUC, PR-AUC and Matthews Correlation Coefficient. These metrics provide a more complete picture of model performance, especially for the minority phishing class.Draft-Final-Version.docx
+
+Recall is especially important because it measures the proportion of phishing websites correctly detected. Precision shows how many predicted phishing sites were actually phishing. F1-score balances the two. ROC-AUC measures overall class separability, while PR-AUC is especially helpful in imbalanced settings because it focuses more directly on the positive class. MCC is included because it gives a balanced measure that remains informative even when class sizes differ greatly.Draft-Final-Version.docx
+
+The confusion matrix is also recorded so that false positives and false negatives can be inspected directly. This matters in phishing detection because a false negative may allow a malicious website to go undetected, while a false positive may incorrectly flag a legitimate site. The design therefore supports both overall performance assessment and detailed error analysis.Draft-Final-Version.docx
+
+Table 4.3 Evaluation metrics
+
+	Metric
+
+	Purpose
+
+
+	Precision
+
+	Measures the proportion of predicted phishing sites that are actually phishing
+
+
+	Recall
+
+	Measures the proportion of phishing sites correctly detected
+
+
+	F1-score
+
+	Balances precision and recall
+
+
+	ROC-AUC
+
+	Measures overall separability between classes
+
+
+	PR-AUC
+
+	Focuses on minority-class performance
+
+
+	MCC
+
+	Provides a balanced summary under class imbalance
+
+
+	Confusion matrix
+
+	Shows TP, FP, TN and FN counts
+
+
+
+
+4.9 Statistical Testing
+
+Where multiple imbalance techniques are compared across repeated runs, statistical significance testing will be used to assess whether observed differences are meaningful rather than due to sampling variation. This is especially important when the best-performing methods have very similar average scores. For paired model comparisons, McNemar's test will be used on the held-out predictions, while non-parametric tests such as the Friedman test will be used where several methods are compared simultaneously.pmc.ncbi.nlm.nihDraft-Final-Version.docx
+
+Including statistical testing strengthens the dissertation because it prevents the results from relying only on mean performance values. It also makes the comparison more defensible in an academic setting, where consistency across folds and repeated experiments matters as much as raw accuracy.pmc.ncbi.nlm.nih
+
+4.10 Implementation Workflow
+
+The implementation workflow follows a repeated experimental sequence. First, the dataset is loaded and checked. Second, the train-test split is created using stratified sampling. Third, one imbalance treatment technique is applied within the training portion of each cross-validation fold. Fourth, one classifier is trained on the treated data. Fifth, the model is evaluated on the untouched validation fold and finally on the held-out test set. This process is repeated across all combinations of dataset, imbalance treatment technique and classifier, yielding a total of 42 experimental configurations (2 datasets × 7 imbalance techniques × 3 classifiers).machinelearningmasteryDraft-Final-Version.docx
+
+This repeated workflow produces a structured comparison matrix that can be used to analyse which balancing methods work best under which conditions. For example, it becomes possible to compare whether SMOTE-based techniques improve recall more effectively than undersampling, or whether Random Forest benefits more consistently from resampling than SVM. The implementation is therefore designed not just to build models, but to generate evidence that answers the dissertation research question.Draft-Final-Version.docx
+
+Figure 4.4 Experimental workflow for comparative evaluation.
+Source: Author's own work.
+
+4.11 Software and Implementation Environment
+
+The implementation is carried out using Python 3.10 and the following core libraries:
+
+•	Scikit-learn 1.3.0 for machine learning models, cross-validation and evaluation metrics
+•	Imbalanced-learn 0.11.0 for imbalance treatment techniques including SMOTE, ADASYN, SMOTEENN and SMOTETomek
+•	Pandas 2.0.3 for data loading and manipulation
+•	NumPy 1.24.3 for numerical computation
+
+These versions are specified to support reproducibility, so that future researchers can replicate the experimental environment. The use of widely adopted open-source libraries also strengthens the transparency and credibility of the implementation.
+
+4.12 Design Justification
+
+The design choices made in this chapter are intended to support fairness, reproducibility and relevance. The use of two datasets makes the findings more robust, because it reduces the risk that the results are specific to a single benchmark. The use of multiple imbalance treatment methods allows the study to compare different balancing philosophies, rather than relying on one preferred approach. The use of three classifiers ensures that the results are not limited to a single model family.Draft-Final-Version.docx
+
+The overall implementation is deliberately structured around controlled experimentation. That is important because the dissertation is not trying to claim that one model solves phishing detection universally. Instead, it is examining how class imbalance treatment affects model behaviour under different experimental conditions. This makes the design academically defensible and closely aligned to the literature on imbalanced phishing detection.Draft-Final-Version.docx
+
+4.13 Chapter Summary
+
+This chapter has described the design and implementation of the experimental phishing detection system. It explained how the datasets were integrated, how preprocessing was carried out, how imbalance treatment methods were applied, how cross-validation and hyperparameter tuning were configured, how the machine learning models were selected and how performance was evaluated. The implementation is intentionally modular and comparative to ensure that all imbalance treatment techniques are evaluated under identical experimental conditions, thereby supporting fair comparison and reproducible research.scikit-learn+1Draft-Final-Version.docx
+
+References
+
+Chawla, N. V., Bowyer, K. W., Hall, L. O. and Kegelmeyer, W. P. (2002) 'SMOTE: Synthetic Minority Over-sampling Technique', Journal of Artificial Intelligence Research, 16, pp. 321–357.cmu
+
+Hannousse, A. and Yahiouche, S. (2021) 'Towards benchmark datasets for machine learning based website phishing detection: An experimental study', Engineering Applications of Artificial Intelligence, 104, 104347.
+
+He, H., Bai, Y., Garcia, E. A. and Li, S. (2008) 'ADASYN: Adaptive Synthetic Sampling Approach for Imbalanced Learning', in 2008 IEEE International Joint Conference on Neural Networks, pp. 1322–1328.semanticscholar
+
+Lemaître, G., Nogueira, F. and Aridas, C. K. (2017) 'Imbalanced-learn: A Python Toolbox to Tackle the Curse of Imbalanced Datasets in Machine Learning', Journal of Machine Learning Research, 18(17), pp. 1–5.
+
+Mohammad, R. M. and McCluskey, L. (2012) Phishing Websites. UCI Machine Learning Repository.archive.ics.uci
+
