@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="640" height="1180" viewBox="0 0 640 1180" font-family="Arial, Helvetica, sans-serif">
-  <rect x="0" y="0" width="640" height="1180" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="660" height="1200" viewBox="0 0 660 1200" font-family="Arial, Helvetica, sans-serif">
+  <rect x="0" y="0" width="660" height="1200" fill="#ffffff"/>
 
   <!-- Arrow marker -->
   <defs>
@@ -22,80 +22,83 @@
   <line x1="320" y1="203" x2="320" y2="237" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
 
   <!-- 3. Train-Test Split -->
-  <ellipse cx="320" cy="278" rx="165" ry="40" fill="#eaf2fb" stroke="#2c3e66" stroke-width="2"/>
-  <text x="320" y="273" text-anchor="middle" font-size="15" fill="#1a1a1a">Stratified 80/20 Train-Test Split</text>
-  <text x="320" y="293" text-anchor="middle" font-size="11" fill="#555555">(fixed random state = 42)</text>
+  <ellipse cx="320" cy="280" rx="180" ry="44" fill="#eaf2fb" stroke="#2c3e66" stroke-width="2"/>
+  <text x="320" y="274" text-anchor="middle" font-size="15" fill="#1a1a1a">Stratified 80/20 Train-Test Split</text>
+  <text x="320" y="292" text-anchor="middle" font-size="11" fill="#555555">(random state = 42; test set remains untouched)</text>
 
-  <line x1="320" y1="318" x2="320" y2="350" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Arrow to imbalance box, emphasising training set only -->
+  <line x1="320" y1="324" x2="320" y2="360" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="333" y="347" text-anchor="start" font-size="11" font-weight="bold" font-style="italic" fill="#b03a2e">training set only</text>
 
   <!-- 4. Imbalance techniques box -->
-  <rect x="25" y="356" width="590" height="196" rx="18" ry="18" fill="#fbf5ea" stroke="#8a6d3b" stroke-width="2"/>
-  <text x="320" y="381" text-anchor="middle" font-size="15" font-weight="bold" fill="#5c4a29">Imbalance Treatment Techniques</text>
+  <rect x="25" y="366" width="590" height="196" rx="18" ry="18" fill="#fbf5ea" stroke="#8a6d3b" stroke-width="2"/>
+  <text x="320" y="391" text-anchor="middle" font-size="15" font-weight="bold" fill="#5c4a29">Imbalance Treatment Techniques</text>
 
   <!-- Row 1 -->
-  <ellipse cx="99" cy="440" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
-  <text x="99" y="437" text-anchor="middle" font-size="11" fill="#1a1a1a">Random</text>
-  <text x="99" y="450" text-anchor="middle" font-size="11" fill="#1a1a1a">Oversampling</text>
+  <ellipse cx="99" cy="450" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
+  <text x="99" y="447" text-anchor="middle" font-size="11" fill="#1a1a1a">Random</text>
+  <text x="99" y="460" text-anchor="middle" font-size="11" fill="#1a1a1a">Oversampling</text>
 
-  <ellipse cx="246" cy="440" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
-  <text x="246" y="437" text-anchor="middle" font-size="11" fill="#1a1a1a">Random</text>
-  <text x="246" y="450" text-anchor="middle" font-size="11" fill="#1a1a1a">Undersampling</text>
+  <ellipse cx="246" cy="450" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
+  <text x="246" y="447" text-anchor="middle" font-size="11" fill="#1a1a1a">Random</text>
+  <text x="246" y="460" text-anchor="middle" font-size="11" fill="#1a1a1a">Undersampling</text>
 
-  <ellipse cx="393" cy="440" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
-  <text x="393" y="445" text-anchor="middle" font-size="13" fill="#1a1a1a">SMOTE</text>
+  <ellipse cx="393" cy="450" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
+  <text x="393" y="455" text-anchor="middle" font-size="13" fill="#1a1a1a">SMOTE</text>
 
-  <ellipse cx="540" cy="440" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
-  <text x="540" y="445" text-anchor="middle" font-size="13" fill="#1a1a1a">ADASYN</text>
+  <ellipse cx="540" cy="450" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
+  <text x="540" y="455" text-anchor="middle" font-size="13" fill="#1a1a1a">ADASYN</text>
 
   <!-- Row 2 -->
-  <ellipse cx="123" cy="510" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
-  <text x="123" y="515" text-anchor="middle" font-size="13" fill="#1a1a1a">SMOTEENN</text>
+  <ellipse cx="123" cy="520" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
+  <text x="123" y="525" text-anchor="middle" font-size="13" fill="#1a1a1a">SMOTEENN</text>
 
-  <ellipse cx="320" cy="510" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
-  <text x="320" y="515" text-anchor="middle" font-size="13" fill="#1a1a1a">SMOTETomek</text>
+  <ellipse cx="320" cy="520" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
+  <text x="320" y="525" text-anchor="middle" font-size="13" fill="#1a1a1a">SMOTETomek</text>
 
-  <ellipse cx="517" cy="510" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
-  <text x="517" y="507" text-anchor="middle" font-size="11" fill="#1a1a1a">Cost-Sensitive</text>
-  <text x="517" y="520" text-anchor="middle" font-size="11" fill="#1a1a1a">Learning</text>
+  <ellipse cx="517" cy="520" rx="68" ry="32" fill="#ffffff" stroke="#8a6d3b" stroke-width="1.8"/>
+  <text x="517" y="517" text-anchor="middle" font-size="11" fill="#1a1a1a">Cost-Sensitive</text>
+  <text x="517" y="530" text-anchor="middle" font-size="11" fill="#1a1a1a">Learning</text>
 
   <!-- Arrow with "select imbalance technique" label -->
-  <line x1="320" y1="552" x2="320" y2="602" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
-  <text x="335" y="582" text-anchor="start" font-size="12" font-style="italic" fill="#555555">select imbalance technique</text>
+  <line x1="320" y1="562" x2="320" y2="612" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="335" y="592" text-anchor="start" font-size="12" font-style="italic" fill="#555555">select imbalance technique</text>
 
-  <!-- 5. Learning Algorithm Selection -->
-  <ellipse cx="320" cy="645" rx="180" ry="42" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
-  <text x="320" y="640" text-anchor="middle" font-size="15" fill="#1a1a1a">Learning Algorithm Selection</text>
-  <text x="320" y="660" text-anchor="middle" font-size="11" fill="#555555">(Decision Tree, Random Forest, SVM)</text>
+  <!-- 5. Classifier Selection -->
+  <ellipse cx="320" cy="654" rx="185" ry="42" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
+  <text x="320" y="649" text-anchor="middle" font-size="15" fill="#1a1a1a">Classifier Selection</text>
+  <text x="320" y="668" text-anchor="middle" font-size="11" fill="#555555">(Decision Tree, Random Forest, Support Vector Machine)</text>
 
-  <line x1="320" y1="687" x2="320" y2="721" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="320" y1="696" x2="320" y2="730" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- 6. Model Training -->
-  <ellipse cx="320" cy="762" rx="155" ry="40" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
-  <text x="320" y="757" text-anchor="middle" font-size="15" fill="#1a1a1a">Model Training</text>
-  <text x="320" y="777" text-anchor="middle" font-size="11" fill="#555555">(stratified 5-fold CV tuning)</text>
+  <!-- 6. Model Training & Hyperparameter Optimisation -->
+  <ellipse cx="320" cy="782" rx="185" ry="50" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
+  <text x="320" y="769" text-anchor="middle" font-size="15" fill="#1a1a1a">Model Training &amp;</text>
+  <text x="320" y="787" text-anchor="middle" font-size="15" fill="#1a1a1a">Hyperparameter Optimisation</text>
+  <text x="320" y="805" text-anchor="middle" font-size="11" fill="#555555">(stratified 5-fold cross-validation)</text>
 
-  <line x1="320" y1="802" x2="320" y2="836" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="320" y1="832" x2="320" y2="866" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
 
   <!-- 7. Evaluation -->
-  <ellipse cx="320" cy="877" rx="160" ry="40" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
-  <text x="320" y="872" text-anchor="middle" font-size="15" fill="#1a1a1a">Evaluation on Test Set</text>
-  <text x="320" y="892" text-anchor="middle" font-size="11" fill="#555555">(Precision, Recall, F1, AUC, MCC)</text>
+  <ellipse cx="320" cy="908" rx="195" ry="42" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
+  <text x="320" y="903" text-anchor="middle" font-size="15" fill="#1a1a1a">Evaluation on Test Set</text>
+  <text x="320" y="922" text-anchor="middle" font-size="11" fill="#555555">(Precision, Recall, F1-score, ROC-AUC, PR-AUC, MCC)</text>
 
-  <line x1="320" y1="917" x2="320" y2="951" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="320" y1="950" x2="320" y2="984" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- 8. Result Comparison -->
-  <ellipse cx="320" cy="989" rx="150" ry="38" fill="#f3eafb" stroke="#5a3d7a" stroke-width="2"/>
-  <text x="320" y="994" text-anchor="middle" font-size="15" fill="#1a1a1a">Result Comparison</text>
+  <!-- 8. Comparative Performance Analysis -->
+  <ellipse cx="320" cy="1022" rx="180" ry="38" fill="#f3eafb" stroke="#5a3d7a" stroke-width="2"/>
+  <text x="320" y="1027" text-anchor="middle" font-size="15" fill="#1a1a1a">Comparative Performance Analysis</text>
 
-  <line x1="320" y1="1027" x2="320" y2="1061" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="320" y1="1060" x2="320" y2="1094" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- 9. McNemar's Test -->
-  <ellipse cx="320" cy="1102" rx="170" ry="40" fill="#f3eafb" stroke="#5a3d7a" stroke-width="2"/>
-  <text x="320" y="1097" text-anchor="middle" font-size="15" fill="#1a1a1a">McNemar's Test</text>
-  <text x="320" y="1117" text-anchor="middle" font-size="11" fill="#555555">(statistical significance, p &lt; 0.05)</text>
+  <!-- 9. Statistical Significance Testing -->
+  <ellipse cx="320" cy="1138" rx="185" ry="42" fill="#f3eafb" stroke="#5a3d7a" stroke-width="2"/>
+  <text x="320" y="1133" text-anchor="middle" font-size="15" fill="#1a1a1a">Statistical Significance Testing</text>
+  <text x="320" y="1152" text-anchor="middle" font-size="11" fill="#555555">(McNemar's Test, p &lt; 0.05)</text>
 
   <!-- Repeat loop: from Model Training area back up to techniques box -->
-  <path d="M 475 762 C 605 762, 608 454, 594 454" fill="none" stroke="#b03a2e" stroke-width="2" stroke-dasharray="6,5" marker-end="url(#arrow)"/>
-  <text x="614" y="610" text-anchor="middle" font-size="11" font-style="italic" fill="#b03a2e" transform="rotate(90 614 610)">repeat for every technique &#215; algorithm &#215; dataset</text>
+  <path d="M 505 782 C 628 782, 632 462, 616 462" fill="none" stroke="#b03a2e" stroke-width="2" stroke-dasharray="6,5" marker-end="url(#arrow)"/>
+  <text x="640" y="622" text-anchor="middle" font-size="10.5" font-style="italic" fill="#b03a2e" transform="rotate(90 640 622)">Repeat for each Dataset &#215; Imbalance Technique &#215; Classifier</text>
 
 </svg>
