@@ -146,7 +146,18 @@ def mcnemar_key_comparisons(
     """
     rows = []
 
-    for dataset, group in all_results.groupby("dataset"):
+    # Comparisons must stay within a single (dataset, seed) combination, because
+    # a different seed produces a different train-test split and McNemar's test
+    # requires both models to have been evaluated on identical instances.
+    group_keys = ["dataset"]
+    if "seed" in all_results.columns:
+        group_keys.append("seed")
+
+    for keys, group in all_results.groupby(group_keys):
+        keys = keys if isinstance(keys, tuple) else (keys,)
+        dataset = keys[0]
+        seed = keys[1] if len(keys) > 1 else None
+
         treated = group[group["imbalance_method"] != "none"]
         if treated.empty:
             continue
@@ -162,6 +173,8 @@ def mcnemar_key_comparisons(
             except FileNotFoundError:
                 return
             row["dataset"] = dataset
+            if seed is not None:
+                row["seed"] = seed
             row["comparison"] = label
             rows.append(row)
 
@@ -332,11 +345,16 @@ def run_all_tests(
         else all_results
     )
 
+    # When the sweep has been repeated under several seeds, each seed forms an
+    # additional matched block. This is what lifts the post-hoc tests out of the
+    # very low power regime that a single replication suffers from.
+    extra_block = ["seed"] if "seed" in results.columns and results["seed"].nunique() > 1 else []
+
     friedman_classifiers = friedman_test(
-        results, "classifier", ["dataset", "imbalance_method"], metric, alpha
+        results, "classifier", ["dataset", "imbalance_method"] + extra_block, metric, alpha
     )
     friedman_methods = friedman_test(
-        results, "imbalance_method", ["dataset", "classifier"], metric, alpha
+        results, "imbalance_method", ["dataset", "classifier"] + extra_block, metric, alpha
     )
 
     friedman_df = pd.DataFrame(
@@ -366,10 +384,10 @@ def run_all_tests(
     friedman_df.to_csv(RESULTS_DIR / "friedman_tests.csv", index=False)
 
     posthoc_clf = posthoc_wilcoxon(
-        results, "classifier", ["dataset", "imbalance_method"], metric, alpha
+        results, "classifier", ["dataset", "imbalance_method"] + extra_block, metric, alpha
     )
     posthoc_mth = posthoc_wilcoxon(
-        results, "imbalance_method", ["dataset", "classifier"], metric, alpha
+        results, "imbalance_method", ["dataset", "classifier"] + extra_block, metric, alpha
     )
     posthoc_clf.to_csv(RESULTS_DIR / "posthoc_classifiers.csv", index=False)
     posthoc_mth.to_csv(RESULTS_DIR / "posthoc_methods.csv", index=False)

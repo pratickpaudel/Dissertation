@@ -40,6 +40,13 @@ Runtime is roughly 5 minutes for the full 48-configuration sweep. Useful flags:
 | `--with-shap` | Also run the SHAP explainability stage |
 | `--ratio 0.05` | Use a different induced imbalance ratio |
 
+For the statistically stronger version, run the sweep under several seeds
+(see [section 8](#8-repeated-runs-recommended)):
+
+```bash
+.venv/bin/python src/experiment.py --seeds 42 1 2 --output results_multiseed.csv
+```
+
 Everything below explains what each stage does and how to run it on its own.
 
 ---
@@ -317,22 +324,78 @@ recall (0.8948) and the worst precision (0.6610), because discarding roughly 90%
 of the legitimate training data removes the information needed to rule phishing
 out. It is the worst configuration on both datasets.
 
-**Post-hoc power for methods is limited.** Comparing seven methods across only
-six blocks (2 datasets × 3 classifiers) left 0 of 21 pairs significant after
-Holm correction, even though the overall Friedman test was significant. Report
-this honestly. To strengthen it, repeat the sweep under several random seeds and
-treat each seed as an additional block — the code supports this via `--output`:
-
-```bash
-for seed in 1 2 3; do
-  # edit RANDOM_STATE in config.py, or parameterise it
-  .venv/bin/python src/experiment.py --output results_seed${seed}.csv
-done
-```
+**Post-hoc power depends on the number of replications.** With a single seed,
+comparing seven methods across only six blocks (2 datasets × 3 classifiers) left
+0 of 21 pairs significant after Holm correction, even though the overall Friedman
+test was significant. Repeating the sweep under several seeds fixes this — see
+the next section.
 
 ---
 
-## 8. Optional sensitivity analysis
+## 8. Repeated runs (recommended)
+
+Each seed repeats the entire matrix as an independent replication: it changes
+which minority instances are retained, the train-test split, the CV folds, the
+samplers and the classifiers. Every replication becomes an additional matched
+block for the Friedman and post-hoc tests.
+
+```bash
+cd src
+../.venv/bin/python experiment.py --seeds 42 1 2 --output results_multiseed.csv
+../.venv/bin/python analysis.py --results results_multiseed.csv
+../.venv/bin/python statistical_tests.py --results results_multiseed.csv
+```
+
+144 configurations, roughly 17 minutes. The analysis and table code averages
+metrics across replications automatically, so each condition still appears once.
+McNemar's test stays *within* a replication, because it requires both models to
+have been evaluated on identical test instances.
+
+### Effect on statistical power
+
+| | 1 seed | 3 seeds |
+|---|---|---|
+| Friedman blocks (classifiers) | 14 | 42 |
+| Friedman χ² (classifiers) | 8.14 (p = 0.0171) | **41.48 (p < 0.001)** |
+| Friedman blocks (methods) | 6 | 18 |
+| Friedman χ² (methods) | 19.16 (p = 0.0039) | **63.96 (p < 0.001)** |
+| Post-hoc classifier pairs significant | 1 of 3 | **3 of 3** |
+| Post-hoc method pairs significant | 0 of 21 | **9 of 21** |
+
+The single-seed run could not distinguish any pair of imbalance methods. With
+three replications, nine pairs separate — including every comparison against
+random undersampling, and SMOTE/SMOTETomek/ADASYN each significantly ahead of
+SMOTEENN.
+
+Reporting this in the dissertation is straightforward: state that the experiment
+was repeated under three random seeds, that reported metrics are means over
+replications, and that each replication contributed an additional block to the
+significance tests.
+
+### Multi-seed results
+
+**By classifier** (mean F1 over 3 replications): Random Forest 0.8794,
+SVM 0.8412, Decision Tree 0.8208. Mean Friedman ranks: Random Forest 1.19,
+SVM 2.36, Decision Tree 2.45. Note that SVM overtakes Decision Tree once
+replications are averaged, which the single-seed run had reversed — a good
+illustration of why repeated runs matter.
+
+**By method** (mean F1): SMOTETomek 0.8729, SMOTE 0.8728, ADASYN 0.8672,
+Random Oversampling 0.8613, Cost-Sensitive 0.8563, SMOTEENN 0.8412,
+Random Undersampling 0.7582.
+
+**Best configurations:** UCI — Random Forest + ADASYN (F1 0.9289);
+Hannousse & Yahiouche — Random Forest + SMOTETomek (F1 0.8883). Worst on both:
+Decision Tree + Random Undersampling (0.7219 and 0.6820).
+
+**Mean recall gain over the untreated baseline:** Random Undersampling +0.0956,
+SMOTEENN +0.0672, SMOTE/SMOTETomek +0.0426, ADASYN +0.0411,
+Random Oversampling +0.0289, Cost-Sensitive +0.0206 — every technique improves
+recall, and the ordering is stable across replications.
+
+---
+
+## 9. Optional sensitivity analysis
 
 `SENSITIVITY_RATIOS` in `config.py` supports re-running at other imbalance
 levels, which lets Chapter 6 discuss how technique effectiveness changes with

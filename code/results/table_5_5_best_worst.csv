@@ -1,3 +1,3 @@
 Dataset,Best configuration,Best F1,Best recall,Best PR-AUC,Worst configuration,Worst F1,Worst recall,Worst PR-AUC,F1 gap
-Hannousse & Yahiouche,Random Forest + SMOTETomek,0.8984,0.9055,0.9459,Decision Tree + Random Undersampling,0.6728,0.8661,0.5716,0.2257
-UCI Phishing Websites,Decision Tree + SMOTE,0.9134,0.8467,0.867,Decision Tree + Random Undersampling,0.7476,0.854,0.7886,0.1658
+Hannousse & Yahiouche,Random Forest + SMOTETomek,0.8883,0.8766,0.9558,Decision Tree + Random Undersampling,0.682,0.895,0.5428,0.2064
+UCI Phishing Websites,Random Forest + ADASYN,0.9289,0.8929,0.9653,Decision Tree + Random Undersampling,0.7219,0.9051,0.6806,0.207

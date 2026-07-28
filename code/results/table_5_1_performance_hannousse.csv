@@ -1,25 +1,25 @@
 Classifier,Imbalance method,precision,recall,f1,roc_auc,pr_auc,mcc
-Decision Tree,No Treatment (Baseline),0.7983,0.748,0.7724,0.8554,0.6883,0.7485
-Decision Tree,Random Oversampling,0.7661,0.748,0.757,0.8613,0.5983,0.7304
-Decision Tree,Random Undersampling,0.55,0.8661,0.6728,0.9312,0.5716,0.6485
-Decision Tree,SMOTE,0.7444,0.7795,0.7615,0.8973,0.6399,0.7346
-Decision Tree,ADASYN,0.7899,0.8583,0.8226,0.9247,0.7198,0.8029
-Decision Tree,SMOTEENN,0.7,0.8819,0.7805,0.9303,0.6773,0.7593
-Decision Tree,SMOTETomek,0.7444,0.7795,0.7615,0.8973,0.6399,0.7346
-Decision Tree,Cost-Sensitive Learning,0.6867,0.811,0.7437,0.8907,0.6446,0.7157
-Random Forest,No Treatment (Baseline),0.916,0.8583,0.8862,0.9928,0.9445,0.8746
-Random Forest,Random Oversampling,0.916,0.8583,0.8862,0.9916,0.9472,0.8746
-Random Forest,Random Undersampling,0.6316,0.9449,0.7571,0.9879,0.9255,0.7432
-Random Forest,SMOTE,0.8846,0.9055,0.8949,0.9914,0.9476,0.8832
-Random Forest,ADASYN,0.8769,0.8976,0.8872,0.9905,0.946,0.8745
-Random Forest,SMOTEENN,0.8273,0.9055,0.8647,0.9892,0.9343,0.8499
-Random Forest,SMOTETomek,0.8915,0.9055,0.8984,0.9908,0.9459,0.8871
-Random Forest,Cost-Sensitive Learning,0.9266,0.7953,0.8559,0.9907,0.9365,0.8443
-Support Vector Machine,No Treatment (Baseline),0.8871,0.8661,0.8765,0.9889,0.9039,0.863
-Support Vector Machine,Random Oversampling,0.8333,0.8661,0.8494,0.9871,0.8927,0.8325
-Support Vector Machine,Random Undersampling,0.6218,0.9449,0.75,0.9837,0.8565,0.7362
-Support Vector Machine,SMOTE,0.7632,0.9134,0.8315,0.9858,0.8751,0.8151
-Support Vector Machine,ADASYN,0.8264,0.7874,0.8065,0.9846,0.8739,0.7858
-Support Vector Machine,SMOTEENN,0.7355,0.8976,0.8085,0.9832,0.866,0.7898
-Support Vector Machine,SMOTETomek,0.7632,0.9134,0.8315,0.9858,0.8751,0.8151
-Support Vector Machine,Cost-Sensitive Learning,0.8284,0.874,0.8506,0.9876,0.8957,0.8338
+Decision Tree,No Treatment (Baseline),0.8099,0.7375,0.7714,0.8851,0.7274,0.7486
+Decision Tree,Random Oversampling,0.7585,0.79,0.7735,0.8817,0.631,0.7483
+Decision Tree,Random Undersampling,0.5509,0.895,0.682,0.9247,0.5428,0.662
+Decision Tree,SMOTE,0.777,0.811,0.7932,0.8838,0.6483,0.7702
+Decision Tree,ADASYN,0.808,0.8373,0.8222,0.9233,0.7265,0.8023
+Decision Tree,SMOTEENN,0.7243,0.8609,0.7862,0.9199,0.6792,0.764
+Decision Tree,SMOTETomek,0.777,0.811,0.7932,0.8838,0.6483,0.7702
+Decision Tree,Cost-Sensitive Learning,0.7361,0.8215,0.7762,0.8967,0.6521,0.7513
+Random Forest,No Treatment (Baseline),0.9235,0.8189,0.8677,0.9934,0.9487,0.8561
+Random Forest,Random Oversampling,0.9188,0.8294,0.8716,0.9938,0.9533,0.8596
+Random Forest,Random Undersampling,0.6813,0.9554,0.7949,0.9906,0.9312,0.7821
+Random Forest,SMOTE,0.8986,0.8766,0.8871,0.994,0.9564,0.8751
+Random Forest,ADASYN,0.8882,0.874,0.8809,0.9932,0.9522,0.8679
+Random Forest,SMOTEENN,0.8362,0.8976,0.8658,0.992,0.9395,0.851
+Random Forest,SMOTETomek,0.9009,0.8766,0.8883,0.9938,0.9558,0.8764
+Random Forest,Cost-Sensitive Learning,0.946,0.7743,0.8513,0.9934,0.9481,0.8418
+Support Vector Machine,No Treatment (Baseline),0.8859,0.853,0.8688,0.99,0.9248,0.855
+Support Vector Machine,Random Oversampling,0.8486,0.8661,0.8572,0.9885,0.9116,0.8412
+Support Vector Machine,Random Undersampling,0.6307,0.9449,0.7564,0.9858,0.8875,0.7425
+Support Vector Machine,SMOTE,0.7837,0.9213,0.8469,0.9887,0.8963,0.8317
+Support Vector Machine,ADASYN,0.7882,0.874,0.8265,0.9871,0.885,0.8091
+Support Vector Machine,SMOTEENN,0.7368,0.9081,0.8133,0.9858,0.8804,0.7958
+Support Vector Machine,SMOTETomek,0.7837,0.9213,0.8469,0.9887,0.8963,0.8317
+Support Vector Machine,Cost-Sensitive Learning,0.8454,0.874,0.8594,0.9887,0.9118,0.8437

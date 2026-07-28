@@ -1,9 +1,25 @@
-model_a,model_b,both_correct,a_correct_b_wrong,b_correct_a_wrong,both_wrong,n_discordant,test,statistic,p_value,significant,favours,dataset,comparison
-hannousse__smotetomek__random_forest__r10,hannousse__none__random_forest__r10,1232,12,10,16,22,exact binomial,10.0,0.8318119049072266,False,model_a,hannousse,best vs untreated baseline
-hannousse__smotetomek__random_forest__r10,hannousse__adasyn__decision_tree__r10,1216,28,7,19,35,chi-squared (continuity corrected),11.4286,0.0007232327164301936,True,model_a,hannousse,best vs best decision_tree
-hannousse__smotetomek__random_forest__r10,hannousse__cost_sensitive__svm__r10,1221,23,10,16,33,chi-squared (continuity corrected),4.3636,0.036713856362704134,True,model_a,hannousse,best vs best svm
-hannousse__smotetomek__random_forest__r10,hannousse__random_undersampling__decision_tree__r10,1155,89,8,18,97,chi-squared (continuity corrected),65.9794,4.556648867160539e-16,True,model_a,hannousse,best vs worst
-uci__smote__decision_tree__r10,uci__none__decision_tree__r10,1332,15,3,19,18,exact binomial,3.0,0.007537841796875,True,model_a,uci,best vs untreated baseline
-uci__smote__decision_tree__r10,uci__adasyn__random_forest__r10,1339,8,5,17,13,exact binomial,5.0,0.5810546875,False,model_a,uci,best vs best random_forest
-uci__smote__decision_tree__r10,uci__cost_sensitive__svm__r10,1326,21,6,16,27,chi-squared (continuity corrected),7.2593,0.007053637888068591,True,model_a,uci,best vs best svm
-uci__smote__decision_tree__r10,uci__random_undersampling__decision_tree__r10,1283,64,7,15,71,chi-squared (continuity corrected),44.169,3.012117113358386e-11,True,model_a,uci,best vs worst
+model_a,model_b,both_correct,a_correct_b_wrong,b_correct_a_wrong,both_wrong,n_discordant,test,statistic,p_value,significant,favours,dataset,seed,comparison
+hannousse__adasyn__random_forest__r10__s1,hannousse__none__random_forest__r10__s1,1227,11,8,24,19,exact binomial,8.0,0.6476058959960938,False,model_a,hannousse,1,best vs untreated baseline
+hannousse__adasyn__random_forest__r10__s1,hannousse__smoteenn__decision_tree__r10__s1,1212,26,10,22,36,chi-squared (continuity corrected),6.25,0.01241933065155227,True,model_a,hannousse,1,best vs best decision_tree
+hannousse__adasyn__random_forest__r10__s1,hannousse__random_oversampling__svm__r10__s1,1221,17,14,18,31,chi-squared (continuity corrected),0.129,0.7194375444233914,False,model_a,hannousse,1,best vs best svm
+hannousse__adasyn__random_forest__r10__s1,hannousse__random_undersampling__decision_tree__r10__s1,1155,83,13,19,96,chi-squared (continuity corrected),49.5938,1.891152101815962e-12,True,model_a,hannousse,1,best vs worst
+hannousse__smote__random_forest__r10__s2,hannousse__none__random_forest__r10__s2,1233,12,5,20,17,exact binomial,5.0,0.143463134765625,False,model_a,hannousse,2,best vs untreated baseline
+hannousse__smote__random_forest__r10__s2,hannousse__adasyn__decision_tree__r10__s2,1219,26,7,18,33,chi-squared (continuity corrected),9.8182,0.001727950774169049,True,model_a,hannousse,2,best vs best decision_tree
+hannousse__smote__random_forest__r10__s2,hannousse__cost_sensitive__svm__r10__s2,1224,21,12,13,33,chi-squared (continuity corrected),1.9394,0.1637343543245882,False,model_a,hannousse,2,best vs best svm
+hannousse__smote__random_forest__r10__s2,hannousse__random_undersampling__decision_tree__r10__s2,1153,92,8,17,100,chi-squared (continuity corrected),68.89,1.041113948978057e-16,True,model_a,hannousse,2,best vs worst
+hannousse__smotetomek__random_forest__r10__s42,hannousse__none__random_forest__r10__s42,1232,12,10,16,22,exact binomial,10.0,0.8318119049072266,False,model_a,hannousse,42,best vs untreated baseline
+hannousse__smotetomek__random_forest__r10__s42,hannousse__adasyn__decision_tree__r10__s42,1216,28,7,19,35,chi-squared (continuity corrected),11.4286,0.0007232327164301936,True,model_a,hannousse,42,best vs best decision_tree
+hannousse__smotetomek__random_forest__r10__s42,hannousse__cost_sensitive__svm__r10__s42,1221,23,10,16,33,chi-squared (continuity corrected),4.3636,0.036713856362704134,True,model_a,hannousse,42,best vs best svm
+hannousse__smotetomek__random_forest__r10__s42,hannousse__random_undersampling__decision_tree__r10__s42,1155,89,8,18,97,chi-squared (continuity corrected),65.9794,4.556648867160539e-16,True,model_a,hannousse,42,best vs worst
+uci__smote__random_forest__r10__s1,uci__none__random_forest__r10__s1,1346,3,5,15,8,exact binomial,3.0,0.7265625,False,model_b,uci,1,best vs untreated baseline
+uci__smote__random_forest__r10__s1,uci__smote__decision_tree__r10__s1,1341,8,5,15,13,exact binomial,5.0,0.5810546875,False,model_a,uci,1,best vs best decision_tree
+uci__smote__random_forest__r10__s1,uci__random_oversampling__svm__r10__s1,1334,15,6,14,21,exact binomial,6.0,0.0783538818359375,False,model_a,uci,1,best vs best svm
+uci__smote__random_forest__r10__s1,uci__random_undersampling__decision_tree__r10__s1,1242,107,12,8,119,chi-squared (continuity corrected),74.2521,6.87516152077354e-18,True,model_a,uci,1,best vs worst
+uci__adasyn__random_forest__r10__s2,uci__none__random_forest__r10__s2,1350,8,1,10,9,exact binomial,1.0,0.0390625,True,model_a,uci,2,best vs untreated baseline
+uci__adasyn__random_forest__r10__s2,uci__smote__decision_tree__r10__s2,1341,17,0,11,17,exact binomial,0.0,1.52587890625e-05,True,model_a,uci,2,best vs best decision_tree
+uci__adasyn__random_forest__r10__s2,uci__smote__svm__r10__s2,1334,24,0,11,24,exact binomial,0.0,1.1920928955078125e-07,True,model_a,uci,2,best vs best svm
+uci__adasyn__random_forest__r10__s2,uci__random_undersampling__decision_tree__r10__s2,1267,91,7,4,98,chi-squared (continuity corrected),70.2959,5.1043198703457234e-17,True,model_a,uci,2,best vs worst
+uci__smote__decision_tree__r10__s42,uci__none__decision_tree__r10__s42,1332,15,3,19,18,exact binomial,3.0,0.007537841796875,True,model_a,uci,42,best vs untreated baseline
+uci__smote__decision_tree__r10__s42,uci__adasyn__random_forest__r10__s42,1339,8,5,17,13,exact binomial,5.0,0.5810546875,False,model_a,uci,42,best vs best random_forest
+uci__smote__decision_tree__r10__s42,uci__cost_sensitive__svm__r10__s42,1326,21,6,16,27,chi-squared (continuity corrected),7.2593,0.007053637888068591,True,model_a,uci,42,best vs best svm
+uci__smote__decision_tree__r10__s42,uci__random_undersampling__decision_tree__r10__s42,1283,64,7,15,71,chi-squared (continuity corrected),44.169,3.012117113358386e-11,True,model_a,uci,42,best vs worst
