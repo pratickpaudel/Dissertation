@@ -77,8 +77,19 @@ def _write(df: pd.DataFrame, name: str, index: bool = False) -> None:
 # Tables
 # ---------------------------------------------------------------------------
 def table_per_dataset(df: pd.DataFrame, dataset: str) -> pd.DataFrame:
-    """Full configuration-level results for one dataset (Tables 5.1 / 5.2)."""
+    """Full configuration-level results for one dataset (Tables 5.1 / 5.2).
+
+    If the sweep was repeated under several seeds, metrics are averaged across
+    replications so that each classifier/method pair appears exactly once.
+    """
     sub = df[df["dataset"] == dataset].copy()
+
+    if "seed" in sub.columns and sub["seed"].nunique() > 1:
+        sub = (
+            sub.groupby(["classifier", "imbalance_method"], as_index=False)[REPORT_METRICS]
+            .mean()
+        )
+
     sub = _ordered(sub, "imbalance_method", METHOD_ORDER)
     sub = sub.sort_values(["classifier", "imbalance_method"])
 
@@ -114,6 +125,17 @@ def table_best_worst(
 ) -> pd.DataFrame:
     """Best and worst configuration per dataset (Table 5.5)."""
     sub = df[df["imbalance_method"] != "none"] if exclude_baseline else df
+
+    # With repeated runs, rank conditions by their mean across replications
+    # rather than letting a single lucky seed decide the winner.
+    if "seed" in sub.columns and sub["seed"].nunique() > 1:
+        sub = (
+            sub.groupby(["dataset", "classifier", "imbalance_method"], as_index=False)[
+                REPORT_METRICS
+            ]
+            .mean()
+        )
+
     rows = []
 
     for dataset, group in sub.groupby("dataset"):
@@ -151,9 +173,16 @@ def table_treatment_effect(df: pd.DataFrame) -> pd.DataFrame:
     central question of the dissertation: each treated configuration is compared
     against the same classifier trained on untreated data.
     """
+    # Each treated run is matched to the baseline from the *same* replication,
+    # so the seed must be part of the key when the sweep has been repeated.
+    key_cols = ["dataset", "classifier"]
+    if "seed" in df.columns:
+        key_cols.append("seed")
+
     baseline = (
         df[df["imbalance_method"] == "none"]
-        .set_index(["dataset", "classifier"])[REPORT_METRICS]
+        .set_index(key_cols)[REPORT_METRICS]
+        .sort_index()
     )
     if baseline.empty:
         return pd.DataFrame()
@@ -162,7 +191,7 @@ def table_treatment_effect(df: pd.DataFrame) -> pd.DataFrame:
     rows = []
 
     for _, r in treated.iterrows():
-        key = (r["dataset"], r["classifier"])
+        key = tuple(r[c] for c in key_cols)
         if key not in baseline.index:
             continue
         base = baseline.loc[key]
@@ -171,15 +200,26 @@ def table_treatment_effect(df: pd.DataFrame) -> pd.DataFrame:
                 "Dataset": DATASET_LABELS.get(r["dataset"], r["dataset"]),
                 "Classifier": CLASSIFIER_LABELS[r["classifier"]],
                 "Imbalance method": METHOD_LABELS[r["imbalance_method"]],
-                "delta_recall": round(r["recall"] - base["recall"], 4),
-                "delta_precision": round(r["precision"] - base["precision"], 4),
-                "delta_f1": round(r["f1"] - base["f1"], 4),
-                "delta_pr_auc": round(r["pr_auc"] - base["pr_auc"], 4),
+                "delta_recall": r["recall"] - base["recall"],
+                "delta_precision": r["precision"] - base["precision"],
+                "delta_f1": r["f1"] - base["f1"],
+                "delta_pr_auc": r["pr_auc"] - base["pr_auc"],
             }
         )
 
     out = pd.DataFrame(rows)
-    return out.sort_values("delta_f1", ascending=False) if not out.empty else out
+    if out.empty:
+        return out
+
+    delta_cols = ["delta_recall", "delta_precision", "delta_f1", "delta_pr_auc"]
+
+    # Average the deltas over replications so one row describes one condition.
+    out = (
+        out.groupby(["Dataset", "Classifier", "Imbalance method"], as_index=False)[delta_cols]
+        .mean()
+        .round(4)
+    )
+    return out.sort_values("delta_f1", ascending=False)
 
 
 # ---------------------------------------------------------------------------

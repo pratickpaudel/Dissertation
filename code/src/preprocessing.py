@@ -65,10 +65,14 @@ def split_data(
     )
 
 
-def prepare(X: pd.DataFrame, y: pd.Series):
+def prepare(
+    X: pd.DataFrame,
+    y: pd.Series,
+    random_state: int = RANDOM_STATE,
+):
     """Clean the features and produce the train-test split in one call."""
     X = clean_features(X)
-    return split_data(X, y)
+    return split_data(X, y, random_state=random_state)
 
 
 def split_summary(y_train, y_test) -> dict:

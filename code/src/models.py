@@ -89,7 +89,11 @@ def get_param_grid(classifier_name: str) -> dict:
 # ---------------------------------------------------------------------------
 # Pipeline construction
 # ---------------------------------------------------------------------------
-def build_pipeline(classifier_name: str, imbalance_method: str) -> ImbPipeline:
+def build_pipeline(
+    classifier_name: str,
+    imbalance_method: str,
+    random_state: int = RANDOM_STATE,
+) -> ImbPipeline:
     """Assemble scaling, optional resampling and the classifier.
 
     Step order is significant:
@@ -102,11 +106,13 @@ def build_pipeline(classifier_name: str, imbalance_method: str) -> ImbPipeline:
     class_weight = "balanced" if uses_class_weight(imbalance_method) else None
     steps = [("scaler", StandardScaler())]
 
-    sampler = get_sampler(imbalance_method)
+    sampler = get_sampler(imbalance_method, random_state=random_state)
     if sampler is not None:
         steps.append(("sampler", sampler))
 
-    steps.append(("classifier", get_classifier(classifier_name, class_weight)))
+    steps.append(
+        ("classifier", get_classifier(classifier_name, class_weight, random_state))
+    )
     return ImbPipeline(steps=steps)
 
 
@@ -116,6 +122,7 @@ def build_search(
     cv_folds: int = CV_FOLDS,
     scoring: str = SCORING,
     n_jobs: int = -1,
+    random_state: int = RANDOM_STATE,
 ) -> GridSearchCV:
     """Wrap the pipeline in a stratified grid search.
 
@@ -123,11 +130,11 @@ def build_search(
     very few minority instances on imbalanced data, which destabilises the
     hyperparameter selection.
     """
-    pipeline = build_pipeline(classifier_name, imbalance_method)
+    pipeline = build_pipeline(classifier_name, imbalance_method, random_state)
     cv = StratifiedKFold(
         n_splits=cv_folds,
         shuffle=True,
-        random_state=RANDOM_STATE,
+        random_state=random_state,
     )
 
     return GridSearchCV(

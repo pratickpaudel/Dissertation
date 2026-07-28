@@ -131,6 +131,7 @@ def induce_imbalance(
 def load_dataset(
     name: str,
     minority_ratio: float | None = None,
+    random_state: int = RANDOM_STATE,
 ) -> tuple[pd.DataFrame, pd.Series]:
     """Load a dataset by name, optionally inducing a target imbalance ratio.
 
@@ -141,6 +142,10 @@ def load_dataset(
     minority_ratio
         If given, the phishing class is downsampled to this proportion.
         If ``None`` the dataset is returned with its native class balance.
+    random_state
+        Controls which minority instances are retained when inducing the
+        imbalance. Varying this across repeated runs is what makes each repeat
+        an independent sample rather than a re-run of the same subset.
     """
     if name not in LOADERS:
         raise ValueError(f"Unknown dataset '{name}'. Expected one of {list(LOADERS)}.")
@@ -153,14 +158,18 @@ def load_dataset(
         X = X.drop(columns=non_numeric)
 
     if minority_ratio is not None:
-        X, y = induce_imbalance(X, y, minority_ratio)
+        X, y = induce_imbalance(X, y, minority_ratio, random_state=random_state)
 
     return X, y
 
 
-def describe(name: str, minority_ratio: float | None = None) -> dict:
+def describe(
+    name: str,
+    minority_ratio: float | None = None,
+    random_state: int = RANDOM_STATE,
+) -> dict:
     """Return summary statistics used for the dataset table in Chapter 5."""
-    X, y = load_dataset(name, minority_ratio)
+    X, y = load_dataset(name, minority_ratio, random_state=random_state)
     n_pos = int((y == 1).sum())
     n_neg = int((y == 0).sum())
     return {
