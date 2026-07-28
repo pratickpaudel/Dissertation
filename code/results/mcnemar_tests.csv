@@ -1,0 +1,9 @@
+model_a,model_b,both_correct,a_correct_b_wrong,b_correct_a_wrong,both_wrong,n_discordant,test,statistic,p_value,significant,favours,dataset,comparison
+hannousse__smotetomek__random_forest__r10,hannousse__none__random_forest__r10,1232,12,10,16,22,exact binomial,10.0,0.8318119049072266,False,model_a,hannousse,best vs untreated baseline
+hannousse__smotetomek__random_forest__r10,hannousse__adasyn__decision_tree__r10,1216,28,7,19,35,chi-squared (continuity corrected),11.4286,0.0007232327164301936,True,model_a,hannousse,best vs best decision_tree
+hannousse__smotetomek__random_forest__r10,hannousse__cost_sensitive__svm__r10,1221,23,10,16,33,chi-squared (continuity corrected),4.3636,0.036713856362704134,True,model_a,hannousse,best vs best svm
+hannousse__smotetomek__random_forest__r10,hannousse__random_undersampling__decision_tree__r10,1155,89,8,18,97,chi-squared (continuity corrected),65.9794,4.556648867160539e-16,True,model_a,hannousse,best vs worst
+uci__smote__decision_tree__r10,uci__none__decision_tree__r10,1332,15,3,19,18,exact binomial,3.0,0.007537841796875,True,model_a,uci,best vs untreated baseline
+uci__smote__decision_tree__r10,uci__adasyn__random_forest__r10,1339,8,5,17,13,exact binomial,5.0,0.5810546875,False,model_a,uci,best vs best random_forest
+uci__smote__decision_tree__r10,uci__cost_sensitive__svm__r10,1326,21,6,16,27,chi-squared (continuity corrected),7.2593,0.007053637888068591,True,model_a,uci,best vs best svm
+uci__smote__decision_tree__r10,uci__random_undersampling__decision_tree__r10,1283,64,7,15,71,chi-squared (continuity corrected),44.169,3.012117113358386e-11,True,model_a,uci,best vs worst
