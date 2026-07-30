@@ -1,6 +1,6 @@
 flowchart TD
-    A([Dataset Loading<br/><i>UCI & Hannousse-Yahiouche</i>]) --> B([Data Preprocessing])
-    B --> C([Stratified 80/20 Train-Test Split<br/><i>random state = 42; test set remains untouched</i>])
+    A([Dataset Loading<br/><i>Vrbancic 1:1.89 & URL-Phish 1:6.02</i>]) --> B([Data Preprocessing<br/><i>cleaning; stratified subsample to 20,000</i>])
+    B --> C([Stratified 80/20 Train-Test Split<br/><i>natural class ratio kept; test set remains untouched</i>])
     C -->|training set only| D
 
     subgraph D [Imbalance Treatment Techniques]
@@ -18,6 +18,6 @@ flowchart TD
     E --> F([Model Training & Hyperparameter Optimisation<br/><i>stratified 5-fold cross-validation</i>])
     F --> G([Evaluation on Test Set<br/><i>Precision, Recall, F1-score, ROC-AUC, PR-AUC, MCC</i>])
     G --> H([Comparative Performance Analysis])
-    H --> I([Statistical Significance Testing<br/><i>McNemar's Test, p &lt; 0.05</i>])
+    H --> I([Statistical Significance Testing<br/><i>Friedman and McNemar's Test, p &lt; 0.05</i><br/><i>each replication forms a matched block</i>])
 
-    F -.->|Repeat for each Dataset x Imbalance Technique x Classifier| D
+    F -.->|Repeat for each Dataset x Imbalance Technique x Classifier,<br/>replicated under seeds 42, 1 and 2| D

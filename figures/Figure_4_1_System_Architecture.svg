@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="900" viewBox="0 0 760 900" font-family="Arial, Helvetica, sans-serif">
+  <rect x="0" y="0" width="760" height="900" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <!-- ============ Stage 1: Data ============ -->
+  <rect x="60" y="30" width="640" height="98" rx="10" fill="#eaf2fb" stroke="#2c3e66" stroke-width="2"/>
+  <text x="80" y="58" font-size="16" font-weight="bold" fill="#1a2b4a">1. Data Layer</text>
+  <text x="640" y="58" text-anchor="end" font-size="12" font-style="italic" fill="#5a6b8a">data_loader.py</text>
+
+  <rect x="86" y="72" width="270" height="42" rx="6" fill="#ffffff" stroke="#7d92b8" stroke-width="1.5"/>
+  <text x="221" y="90" text-anchor="middle" font-size="12" fill="#1a1a1a">Vrbancic et al. (2020)</text>
+  <text x="221" y="106" text-anchor="middle" font-size="11" fill="#555555">88,647 x 111 | 34.57% phishing | 1:1.89</text>
+
+  <rect x="404" y="72" width="270" height="42" rx="6" fill="#ffffff" stroke="#7d92b8" stroke-width="1.5"/>
+  <text x="539" y="90" text-anchor="middle" font-size="12" fill="#1a1a1a">URL-Phish (2025)</text>
+  <text x="539" y="106" text-anchor="middle" font-size="11" fill="#555555">116,600 x 22 | 14.24% phishing | 1:6.02</text>
+
+  <line x1="380" y1="128" x2="380" y2="162" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Stage 2: Preprocessing ============ -->
+  <rect x="60" y="168" width="640" height="98" rx="10" fill="#eaf2fb" stroke="#2c3e66" stroke-width="2"/>
+  <text x="80" y="196" font-size="16" font-weight="bold" fill="#1a2b4a">2. Preprocessing</text>
+  <text x="640" y="196" text-anchor="end" font-size="12" font-style="italic" fill="#5a6b8a">preprocessing.py</text>
+
+  <rect x="86" y="210" width="182" height="42" rx="6" fill="#ffffff" stroke="#7d92b8" stroke-width="1.5"/>
+  <text x="177" y="228" text-anchor="middle" font-size="12" fill="#1a1a1a">Structural cleaning</text>
+  <text x="177" y="244" text-anchor="middle" font-size="10.5" fill="#555555">constant / duplicate cols</text>
+
+  <rect x="288" y="210" width="182" height="42" rx="6" fill="#ffffff" stroke="#7d92b8" stroke-width="1.5"/>
+  <text x="379" y="228" text-anchor="middle" font-size="12" fill="#1a1a1a">Stratified subsample</text>
+  <text x="379" y="244" text-anchor="middle" font-size="10.5" fill="#555555">20,000 rows; ratio kept</text>
+
+  <rect x="490" y="210" width="184" height="42" rx="6" fill="#ffffff" stroke="#7d92b8" stroke-width="1.5"/>
+  <text x="582" y="228" text-anchor="middle" font-size="12" fill="#1a1a1a">Stratified 80/20 split</text>
+  <text x="582" y="244" text-anchor="middle" font-size="10.5" fill="#555555">test set sealed</text>
+
+  <line x1="380" y1="266" x2="380" y2="300" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="392" y="288" font-size="11" font-weight="bold" font-style="italic" fill="#b03a2e">training set only</text>
+
+  <!-- ============ Stage 3: Imbalance treatment ============ -->
+  <rect x="60" y="306" width="640" height="104" rx="10" fill="#fbf5ea" stroke="#8a6d3b" stroke-width="2"/>
+  <text x="80" y="334" font-size="16" font-weight="bold" fill="#5c4a29">3. Imbalance Treatment</text>
+  <text x="640" y="334" text-anchor="end" font-size="12" font-style="italic" fill="#8a7a5a">imbalance.py</text>
+
+  <rect x="86" y="348" width="182" height="48" rx="6" fill="#ffffff" stroke="#b09468" stroke-width="1.5"/>
+  <text x="177" y="366" text-anchor="middle" font-size="12" fill="#1a1a1a">Data-level</text>
+  <text x="177" y="381" text-anchor="middle" font-size="10.5" fill="#555555">Random Over / Under</text>
+  <text x="177" y="393" text-anchor="middle" font-size="10.5" fill="#555555">SMOTE, ADASYN</text>
+
+  <rect x="288" y="348" width="182" height="48" rx="6" fill="#ffffff" stroke="#b09468" stroke-width="1.5"/>
+  <text x="379" y="366" text-anchor="middle" font-size="12" fill="#1a1a1a">Hybrid</text>
+  <text x="379" y="381" text-anchor="middle" font-size="10.5" fill="#555555">SMOTEENN</text>
+  <text x="379" y="393" text-anchor="middle" font-size="10.5" fill="#555555">SMOTETomek</text>
+
+  <rect x="490" y="348" width="184" height="48" rx="6" fill="#ffffff" stroke="#b09468" stroke-width="1.5"/>
+  <text x="582" y="366" text-anchor="middle" font-size="12" fill="#1a1a1a">Algorithm-level</text>
+  <text x="582" y="381" text-anchor="middle" font-size="10.5" fill="#555555">Cost-sensitive</text>
+  <text x="582" y="393" text-anchor="middle" font-size="10.5" fill="#555555">learning</text>
+
+  <line x1="380" y1="410" x2="380" y2="444" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Stage 4: Model training ============ -->
+  <rect x="60" y="450" width="640" height="112" rx="10" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
+  <text x="80" y="478" font-size="16" font-weight="bold" fill="#1f4a30">4. Model Training</text>
+  <text x="640" y="478" text-anchor="end" font-size="12" font-style="italic" fill="#4a7a5e">models.py</text>
+
+  <rect x="86" y="492" width="588" height="26" rx="5" fill="#ffffff" stroke="#6aa383" stroke-width="1.5"/>
+  <text x="380" y="510" text-anchor="middle" font-size="11.5" fill="#1a1a1a">imblearn Pipeline: scaler -&gt; sampler -&gt; classifier, inside GridSearchCV (stratified 5-fold)</text>
+
+  <rect x="86" y="524" width="182" height="28" rx="5" fill="#ffffff" stroke="#6aa383" stroke-width="1.5"/>
+  <text x="177" y="542" text-anchor="middle" font-size="12" fill="#1a1a1a">Decision Tree</text>
+
+  <rect x="288" y="524" width="182" height="28" rx="5" fill="#ffffff" stroke="#6aa383" stroke-width="1.5"/>
+  <text x="379" y="542" text-anchor="middle" font-size="12" fill="#1a1a1a">Random Forest</text>
+
+  <rect x="490" y="524" width="184" height="28" rx="5" fill="#ffffff" stroke="#6aa383" stroke-width="1.5"/>
+  <text x="582" y="542" text-anchor="middle" font-size="12" fill="#1a1a1a">Support Vector Machine</text>
+
+  <line x1="380" y1="562" x2="380" y2="596" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ============ Stage 5: Evaluation and analysis ============ -->
+  <rect x="60" y="602" width="640" height="170" rx="10" fill="#f3eafb" stroke="#5a3d7a" stroke-width="2"/>
+  <text x="80" y="630" font-size="16" font-weight="bold" fill="#42295c">5. Evaluation and Analysis</text>
+
+  <rect x="86" y="642" width="290" height="56" rx="6" fill="#ffffff" stroke="#9478b0" stroke-width="1.5"/>
+  <text x="231" y="660" text-anchor="middle" font-size="12" fill="#1a1a1a">Performance metrics</text>
+  <text x="231" y="675" text-anchor="middle" font-size="10.5" fill="#555555">Precision, Recall, F1, ROC-AUC, PR-AUC, MCC</text>
+  <text x="231" y="690" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5f96">evaluation.py</text>
+
+  <rect x="384" y="642" width="290" height="56" rx="6" fill="#ffffff" stroke="#9478b0" stroke-width="1.5"/>
+  <text x="529" y="660" text-anchor="middle" font-size="12" fill="#1a1a1a">Comparative analysis</text>
+  <text x="529" y="675" text-anchor="middle" font-size="10.5" fill="#555555">aggregation and result tables</text>
+  <text x="529" y="690" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5f96">analysis.py</text>
+
+  <rect x="86" y="706" width="290" height="56" rx="6" fill="#ffffff" stroke="#9478b0" stroke-width="1.5"/>
+  <text x="231" y="724" text-anchor="middle" font-size="12" fill="#1a1a1a">Significance testing</text>
+  <text x="231" y="739" text-anchor="middle" font-size="10.5" fill="#555555">Friedman, Wilcoxon, McNemar</text>
+  <text x="231" y="754" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5f96">statistical_tests.py</text>
+
+  <rect x="384" y="706" width="290" height="56" rx="6" fill="#ffffff" stroke="#9478b0" stroke-width="1.5"/>
+  <text x="529" y="724" text-anchor="middle" font-size="12" fill="#1a1a1a">Explainability</text>
+  <text x="529" y="739" text-anchor="middle" font-size="10.5" fill="#555555">SHAP global and local attribution</text>
+  <text x="529" y="754" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5f96">explainability.py</text>
+
+  <!-- ============ Cross-cutting: reproducibility ============ -->
+  <rect x="60" y="794" width="640" height="72" rx="10" fill="#f7f7f7" stroke="#888888" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="380" y="818" text-anchor="middle" font-size="13" font-weight="bold" fill="#444444">Cross-cutting: reproducibility and orchestration</text>
+  <text x="380" y="836" text-anchor="middle" font-size="11" fill="#555555">Fixed seeds (42, 1, 2) propagate to subsampling, splitting, folds, samplers and classifiers</text>
+  <text x="380" y="854" text-anchor="middle" font-size="10.5" font-style="italic" fill="#666666">config.py | experiment.py | run_pipeline.py</text>
+
+  <!-- Stage-to-stage flow annotation on the left -->
+  <text x="34" y="217" text-anchor="middle" font-size="11" font-style="italic" fill="#777777" transform="rotate(-90 34 217)">raw data</text>
+  <text x="34" y="506" text-anchor="middle" font-size="11" font-style="italic" fill="#777777" transform="rotate(-90 34 506)">treated training data</text>
+  <text x="34" y="687" text-anchor="middle" font-size="11" font-style="italic" fill="#777777" transform="rotate(-90 34 687)">fitted models</text>
+</svg>

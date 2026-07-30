@@ -12,11 +12,11 @@ Comparative study of class imbalance treatment techniques for machine learning-b
 │   ├── Chapter 6 Discussion Template.docx
 │   └── Chapter 7 Conclusion and Future Work Template.docx
 ├── figures/                  # Diagrams and figures
-│   ├── Figure_Experimental_Procedure.svg            # Editable vector source
-│   ├── Figure_Experimental_Procedure.png            # Standard resolution (900px)
-│   ├── Figure_Experimental_Procedure_HighRes.png    # High resolution (2400px)
-│   ├── Figure_Experimental_Procedure.pdf            # Vector PDF for print/LaTeX
-│   └── Figure_Experimental_Procedure.mmd            # Mermaid source (editable)
+│   ├── Figure_4_1_System_Architecture.*             # Fig 4.1 modular pipeline
+│   ├── Figure_4_2_Preprocessing_Workflow.*         # Fig 4.2 preprocessing
+│   ├── Figure_4_3_Classifier_Comparison.*          # Fig 4.3 classifier comparison
+│   └── Figure_4_4_Experimental_Procedure.*         # Fig 4.4 experimental procedure
+│       (each available as .svg source, .png, _HighRes.png and .pdf)
 └── code/                     # Implementation of the experimental pipeline
     ├── README.md             # Step-by-step implementation guide
     ├── run_pipeline.py       # End-to-end runner
