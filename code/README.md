@@ -64,26 +64,35 @@ cd src
 
 `data_loader.py` fetches both benchmarks and caches them in `data/`:
 
-* **UCI Phishing Websites** — downloaded via `ucimlrepo` (id 327).
-* **Hannousse & Yahiouche** — downloaded from the authors' Mendeley record.
+| Dataset | As published | % phishing | Ratio |
+|---|---|---|---|
+| **Vrbančič et al. (2020)** | 88,647 rows, 111 features | 34.57% | 1:1.89 |
+| **URL-Phish (2025)** | 116,600 rows, 22 features | 14.24% | 1:6.02 |
 
-Two decisions are enforced here:
+Both are **naturally imbalanced as published**, so no artificial skew is
+introduced. This matters because applying SMOTE or cost-sensitive weighting to
+balanced data leaves the techniques with nothing to correct.
+
+Two earlier candidates were examined and rejected for exactly that reason. Their
+loaders are retained so the claim can be reproduced:
+
+| Rejected | % phishing | Ratio | Why |
+|---|---|---|---|
+| UCI Phishing Websites | 44.31% | 1:1.26 | Close to balanced |
+| Hannousse & Yahiouche | 50.00% | 1:1.00 | Balanced by design |
 
 **Label convention.** Phishing is the positive class (`1`), legitimate is `0`.
-The UCI target uses `-1` for phishing, so it is remapped. Every recall,
-precision, F1 and PR-AUC figure therefore refers to the phishing class.
+Every recall, precision, F1 and PR-AUC figure refers to the phishing class.
 
-**Induced imbalance.** Neither published dataset is actually imbalanced:
+**Stratified subsampling.** Both datasets are reduced to 20,000 rows
+(`SUBSAMPLE_SIZE` in `config.py`) because the SVM scales roughly quadratically
+in training set size and the matrix is repeated across three seeds. Sampling is
+proportional within each class, so the imbalance ratio is preserved exactly
+(34.57% and 14.23% after reduction). Only volume is reduced.
 
-| Dataset | As published | % phishing |
-|---|---|---|
-| UCI | 11,055 rows, 30 features | 44.31% (1:1.26) |
-| Hannousse & Yahiouche | 11,430 rows, 87 features | 50.00% (1:1.00) |
-
-Since the research question concerns imbalance *treatment*, a 10% minority
-share (≈1:9) is induced by randomly downsampling the phishing class. Only
-minority instances are removed, so no data is fabricated before treatment. The
-ratio is set by `MINORITY_RATIO` in `config.py`.
+**Induced imbalance is not used.** `MINORITY_RATIO` is `None`; the
+`induce_imbalance` function is retained only for the optional severity
+sensitivity analysis.
 
 `preprocessing.py` then drops zero-variance and duplicate columns, handles any
 non-finite values, and produces a **stratified 80/20 split** with
@@ -256,54 +265,59 @@ split, the cross-validation folds, every sampler, and every classifier. Deleting
 
 ## 6. Results obtained
 
-Run at a 10% minority ratio (≈1:9), F1 used for model selection.
+Both datasets used at their published class ratios, reduced to 20,000 rows by
+stratified sampling, replicated across seeds 42, 1 and 2. F1 on the phishing
+class was used for hyperparameter selection. Values below are means over the
+three replications.
 
 **By classifier** (treated configurations only):
 
 | Classifier | Precision | Recall | F1 | ROC-AUC | PR-AUC | MCC |
 |---|---|---|---|---|---|---|
-| Decision Tree | 0.8021 | 0.8390 | 0.8147 | 0.9199 | 0.7370 | 0.7963 |
-| **Random Forest** | **0.8861** | 0.8624 | **0.8692** | **0.9862** | **0.9427** | **0.8576** |
-| Support Vector Machine | 0.8052 | **0.8691** | 0.8323 | 0.9795 | 0.8904 | 0.8156 |
+| Decision Tree | 0.8683 | 0.9216 | 0.8934 | 0.9498 | 0.8456 | 0.8608 |
+| **Random Forest** | **0.9036** | 0.9398 | **0.9204** | **0.9907** | **0.9749** | **0.8962** |
+| Support Vector Machine | 0.8440 | **0.9491** | 0.8926 | 0.9853 | 0.9520 | 0.8600 |
 
 **By imbalance method** (averaged over classifiers and datasets):
 
 | Method | Precision | Recall | F1 | PR-AUC |
 |---|---|---|---|---|
-| No Treatment (Baseline) | 0.9195 | 0.8208 | 0.8664 | 0.8824 |
-| Random Oversampling | 0.8754 | 0.8379 | 0.8558 | 0.8592 |
-| Random Undersampling | 0.6610 | **0.8948** | 0.7575 | 0.8307 |
-| SMOTE | 0.8773 | 0.8503 | 0.8603 | 0.8664 |
-| ADASYN | 0.8753 | 0.8448 | 0.8585 | 0.8735 |
-| SMOTEENN | 0.7890 | 0.8830 | 0.8321 | 0.8383 |
-| SMOTETomek | 0.8784 | 0.8503 | **0.8609** | 0.8659 |
-| Cost-Sensitive Learning | 0.8615 | 0.8367 | 0.8462 | 0.8631 |
+| No Treatment (Baseline) | **0.9286** | 0.9067 | **0.9172** | **0.9432** |
+| Random Oversampling | 0.8884 | 0.9305 | 0.9083 | 0.9286 |
+| Random Undersampling | 0.8267 | **0.9493** | 0.8824 | 0.9171 |
+| SMOTE | 0.8912 | 0.9320 | 0.9108 | 0.9323 |
+| ADASYN | 0.8539 | 0.9421 | 0.8941 | 0.9220 |
+| SMOTEENN | 0.8555 | 0.9462 | 0.8982 | 0.9103 |
+| SMOTETomek | 0.8912 | 0.9329 | 0.9112 | 0.9316 |
+| Cost-Sensitive Learning | 0.8970 | 0.9250 | 0.9099 | 0.9269 |
 
 **Best and worst configurations:**
 
 | Dataset | Best | F1 | Worst | F1 | Gap |
 |---|---|---|---|---|---|
-| UCI | Decision Tree + SMOTE | 0.9134 | Decision Tree + Random Undersampling | 0.7476 | 0.1658 |
-| Hannousse & Yahiouche | Random Forest + SMOTETomek | 0.8984 | Decision Tree + Random Undersampling | 0.6728 | 0.2257 |
+| Vrbančič (1:1.89) | Random Forest + SMOTE | 0.9420 | SVM + ADASYN | 0.9001 | 0.0419 |
+| URL-Phish (1:6.02) | Random Forest + SMOTE | 0.9167 | Decision Tree + Random Undersampling | 0.8115 | 0.1052 |
 
-**Statistical tests:**
+**Statistical tests** (42 blocks for classifiers, 18 for methods):
 
 | Test | Statistic | p | Significant |
 |---|---|---|---|
-| Friedman — classifiers | χ² = 8.14 | 0.0171 | yes |
-| Friedman — imbalance methods | χ² = 19.16 | 0.0039 | yes |
-| Post-hoc: Random Forest vs SVM | — | < 0.001 | yes |
-| McNemar: UCI best vs untreated baseline | — | 0.0075 | yes |
-| McNemar: Hannousse best vs worst | — | < 0.001 | yes |
+| Friedman — classifiers | χ² = 57.57 | < 0.001 | yes |
+| Friedman — imbalance methods | χ² = 43.70 | < 0.001 | yes |
+| Post-hoc classifier pairs | — | — | 2 of 3 |
+| Post-hoc method pairs | — | — | 8 of 21 |
 
-Mean Friedman ranks (1 = best): Random Forest 1.43, Decision Tree 2.07, SVM
-2.50; SMOTETomek 2.42 best method, Random Undersampling 7.00 worst.
+Mean Friedman ranks (1 = best): Random Forest 1.05, SVM 2.41, Decision Tree
+2.55. For methods, SMOTE and SMOTETomek tie best at 2.64, and Random
+Undersampling is worst at 5.94.
 
-**SHAP, UCI / Random Forest:** the four highest-ranked features
-(`sslfinal_state`, `url_of_anchor`, `web_traffic`, `having_sub_domain`) hold
-identical rank across all treatment methods, while mid-ranked features move by
-up to four positions. Imbalance treatment therefore perturbs the ordering of
-weaker features without changing which evidence dominates the decision.
+**SHAP.** On URL-Phish with Random Forest, the three highest-ranked features
+(`is_https`, `entropy`, `digit_ratio`) hold identical rank across all treatment
+methods, while mid-ranked features move by up to five positions. On Vrbančič,
+`time_domain_activation` and `qty_slash_url` are similarly invariant, but weaker
+features shift by as much as eleven positions. Imbalance treatment therefore
+perturbs the ordering of weaker features without changing which evidence
+dominates the decision.
 
 ---
 
@@ -311,33 +325,34 @@ weaker features without changing which evidence dominates the decision.
 
 Three points need care in the write-up.
 
-**Treatment trades precision for recall.** Every technique raised recall over
-the untreated baseline (+0.016 to +0.074 mean), but all of them lowered
-precision, so the baseline retains the highest mean F1 (0.8664). This is not a
-null result — it is the central trade-off, and it means the choice of technique
-should follow from the relative cost of a missed phishing site versus a false
-alarm. For phishing detection, recall usually dominates, which favours
-treatment even at some precision cost.
+**Treatment trades precision for recall.** Every technique raised recall over the
+untreated baseline (+0.018 to +0.043 mean), but all of them lowered precision, so
+the baseline retains the highest mean F1 (0.9172). This is not a null result — it
+is the central trade-off. The choice of technique should follow from the relative
+cost of a missed phishing site versus a false alarm; for phishing detection recall
+usually dominates, which favours treatment despite the precision cost. Note that
+this same pattern appeared on the earlier balanced datasets under induced
+imbalance, so it is a robust finding rather than an artefact of one design.
 
-**Random undersampling is the clearest failure case.** It produced the best
-recall (0.8948) and the worst precision (0.6610), because discarding roughly 90%
-of the legitimate training data removes the information needed to rule phishing
-out. It is the worst configuration on both datasets.
+**Imbalance severity governs how much technique choice matters.** The best-to-worst
+F1 gap is 0.1052 on URL-Phish (1:6.02) but only 0.0419 on Vrbančič (1:1.89) — two
+and a half times larger. Pairing datasets with different natural skew is what makes
+this observable, and it is the strongest argument for the two-dataset design.
 
-**Post-hoc power depends on the number of replications.** With a single seed,
-comparing seven methods across only six blocks (2 datasets × 3 classifiers) left
-0 of 21 pairs significant after Holm correction, even though the overall Friedman
-test was significant. Repeating the sweep under several seeds fixes this — see
-the next section.
+**Random undersampling remains the clearest failure case.** It produced the
+highest recall (0.9493) and the lowest precision (0.8267), because discarding most
+of the legitimate training data removes the evidence needed to rule phishing out.
+It is the worst method by mean Friedman rank and forms the worst configuration on
+URL-Phish.
 
 ---
 
-## 8. Repeated runs (recommended)
+## 8. Repeated runs
 
-Each seed repeats the entire matrix as an independent replication: it changes
-which minority instances are retained, the train-test split, the CV folds, the
-samplers and the classifiers. Every replication becomes an additional matched
-block for the Friedman and post-hoc tests.
+Each seed repeats the entire matrix as an independent replication: it changes the
+stratified subsample, the train-test split, the CV folds, the samplers and the
+classifiers. Every replication becomes an additional matched block for the
+Friedman and post-hoc tests.
 
 ```bash
 cd src
@@ -346,64 +361,47 @@ cd src
 ../.venv/bin/python statistical_tests.py --results results_multiseed.csv
 ```
 
-144 configurations, roughly 17 minutes. The analysis and table code averages
-metrics across replications automatically, so each condition still appears once.
-McNemar's test stays *within* a replication, because it requires both models to
-have been evaluated on identical test instances.
+144 configurations. The analysis code averages metrics across replications
+automatically, so each condition still appears once. McNemar's test stays
+*within* a replication, because it requires both models to have been evaluated on
+identical test instances.
 
-### Effect on statistical power
+**Runtime.** Roughly 70 minutes in total. Background execution is unreliable in
+short-lived environments, so it is safer to run in chunks and merge:
 
-| | 1 seed | 3 seeds |
-|---|---|---|
-| Friedman blocks (classifiers) | 14 | 42 |
-| Friedman χ² (classifiers) | 8.14 (p = 0.0171) | **41.48 (p < 0.001)** |
-| Friedman blocks (methods) | 6 | 18 |
-| Friedman χ² (methods) | 19.16 (p = 0.0039) | **63.96 (p < 0.001)** |
-| Post-hoc classifier pairs significant | 1 of 3 | **3 of 3** |
-| Post-hoc method pairs significant | 0 of 21 | **9 of 21** |
+```bash
+for ds in vrbancic urlphish; do
+  for s in 42 1 2; do
+    ../.venv/bin/python experiment.py --seeds $s --datasets $ds \
+        --output part_${ds}_s${s}.csv
+  done
+done
+```
 
-The single-seed run could not distinguish any pair of imbalance methods. With
-three replications, nine pairs separate — including every comparison against
-random undersampling, and SMOTE/SMOTETomek/ADASYN each significantly ahead of
-SMOTEENN.
+Then concatenate the `part_*.csv` files into `results_multiseed.csv`.
 
-Reporting this in the dissertation is straightforward: state that the experiment
-was repeated under three random seeds, that reported metrics are means over
-replications, and that each replication contributed an additional block to the
-significance tests.
+**Why replication matters.** On an earlier single-seed run, comparing seven
+methods across only six blocks (2 datasets × 3 classifiers) left 0 of 21 pairs
+significant after Holm correction, despite a significant overall Friedman test.
+Three replications raise this to 18 blocks and recover the ability to separate
+individual methods.
 
-### Multi-seed results
-
-**By classifier** (mean F1 over 3 replications): Random Forest 0.8794,
-SVM 0.8412, Decision Tree 0.8208. Mean Friedman ranks: Random Forest 1.19,
-SVM 2.36, Decision Tree 2.45. Note that SVM overtakes Decision Tree once
-replications are averaged, which the single-seed run had reversed — a good
-illustration of why repeated runs matter.
-
-**By method** (mean F1): SMOTETomek 0.8729, SMOTE 0.8728, ADASYN 0.8672,
-Random Oversampling 0.8613, Cost-Sensitive 0.8563, SMOTEENN 0.8412,
-Random Undersampling 0.7582.
-
-**Best configurations:** UCI — Random Forest + ADASYN (F1 0.9289);
-Hannousse & Yahiouche — Random Forest + SMOTETomek (F1 0.8883). Worst on both:
-Decision Tree + Random Undersampling (0.7219 and 0.6820).
-
-**Mean recall gain over the untreated baseline:** Random Undersampling +0.0956,
-SMOTEENN +0.0672, SMOTE/SMOTETomek +0.0426, ADASYN +0.0411,
-Random Oversampling +0.0289, Cost-Sensitive +0.0206 — every technique improves
-recall, and the ordering is stable across replications.
+State in the dissertation that the experiment was repeated under three random
+seeds, that reported metrics are means over replications, and that each
+replication contributed an additional block to the significance tests.
 
 ---
 
 ## 9. Optional sensitivity analysis
 
-`SENSITIVITY_RATIOS` in `config.py` supports re-running at other imbalance
-levels, which lets Chapter 6 discuss how technique effectiveness changes with
-imbalance severity:
+The two datasets already differ in natural imbalance (1:1.89 and 1:6.02), which
+covers the severity question directly. If a finer-grained analysis is wanted,
+`induce_imbalance` can downsample the phishing class further:
 
 ```bash
 ../.venv/bin/python experiment.py --ratio 0.05 --classifiers random_forest --output results_r05.csv
-../.venv/bin/python experiment.py --ratio 0.20 --classifiers random_forest --output results_r20.csv
 ```
 
-Restricting to one classifier keeps this to 8 runs per ratio.
+This is not used in the main study, since both datasets are imbalanced as
+published and inducing further skew would reintroduce the artificiality the
+dataset selection was intended to avoid.

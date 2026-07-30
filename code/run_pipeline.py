@@ -27,7 +27,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from config import MINORITY_RATIO, RESULTS_DIR  # noqa: E402
+from config import (  # noqa: E402
+    DATASETS,
+    MINORITY_RATIO,
+    RESULTS_DIR,
+    SUBSAMPLE_SIZE,
+)
 
 
 def banner(step: str, title: str) -> None:
@@ -53,15 +58,20 @@ def main() -> int:
     banner("1", "Dataset summary")
     from data_loader import describe
 
-    for ds in ("uci", "hannousse"):
+    for ds in DATASETS:
         native = describe(ds)
-        induced = describe(ds, args.ratio)
+        used = describe(ds, args.ratio, subsample=SUBSAMPLE_SIZE)
         print(f"  {ds}:")
         print(f"    as published : {native['instances']:6d} rows, "
-              f"{native['features']:2d} features, "
+              f"{native['features']:3d} features, "
               f"{native['phishing_pct']}% phishing (ratio {native['imbalance_ratio']})")
-        print(f"    after induced imbalance: {induced['instances']:6d} rows, "
-              f"{induced['phishing_pct']}% phishing (ratio {induced['imbalance_ratio']})")
+        print(f"    as used      : {used['instances']:6d} rows, "
+              f"{used['phishing_pct']}% phishing (ratio {used['imbalance_ratio']})")
+
+    print("\n  Rejected candidates (balanced, hence unusable for this study):")
+    for ds in ("uci", "hannousse"):
+        d = describe(ds)
+        print(f"    {ds:10s} {d['phishing_pct']}% phishing (ratio {d['imbalance_ratio']})")
 
     # -- Steps 2-7: run the experimental matrix ----------------------------
     if not args.skip_experiments:
@@ -70,7 +80,7 @@ def main() -> int:
 
         if args.quick:
             run_all(
-                datasets=["uci"],
+                datasets=[DATASETS[0]],
                 methods=["none", "smote", "random_undersampling"],
                 classifiers=["decision_tree"],
                 minority_ratio=args.ratio,

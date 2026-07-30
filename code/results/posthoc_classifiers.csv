@@ -1,4 +1,4 @@
 group_a,group_b,mean_a,mean_b,statistic,p_value,significant_holm
-random_forest,svm,0.8794,0.8412,20.0,1.687112671788782e-10,True
-decision_tree,random_forest,0.8208,0.8794,25.0,4.1109160520136356e-10,True
-decision_tree,svm,0.8208,0.8412,260.0,0.0158250710410357,True
+decision_tree,random_forest,0.8934,0.9204,0.0,4.547473508864641e-13,True
+random_forest,svm,0.9204,0.8926,4.0,3.183231456205249e-12,True
+decision_tree,svm,0.8934,0.8926,423.0,0.7289487666148489,False

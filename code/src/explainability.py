@@ -36,6 +36,7 @@ from config import (
     MINORITY_RATIO,
     RANDOM_STATE,
     RESULTS_DIR,
+    SUBSAMPLE_SIZE,
 )
 from data_loader import load_dataset
 from models import build_search
@@ -63,8 +64,14 @@ class ShapResult(NamedTuple):
 
 
 def _fit_model(dataset: str, method: str, classifier: str, minority_ratio: float):
-    """Refit one configuration and return the model with its train/test data."""
-    X, y = load_dataset(dataset, minority_ratio=minority_ratio)
+    """Refit one configuration and return the model with its train/test data.
+
+    The same stratified subsample as the main experiments is used, so the
+    explanations describe the models that were actually evaluated.
+    """
+    X, y = load_dataset(
+        dataset, minority_ratio=minority_ratio, subsample=SUBSAMPLE_SIZE
+    )
     X_train, X_test, y_train, y_test = prepare(X, y)
 
     search = build_search(classifier, method)
@@ -204,12 +211,13 @@ def local_explanation(
 
 
 def compare_across_methods(
-    dataset: str = "uci",
+    dataset: str = "vrbancic",
     classifier: str = "random_forest",
     methods: list[str] | None = None,
     minority_ratio: float = MINORITY_RATIO,
     top_n: int = 15,
     verbose: bool = True,
+    sample_size: int | None = None,
 ) -> pd.DataFrame:
     """Compare global feature importance across imbalance treatment methods.
 
@@ -223,7 +231,9 @@ def compare_across_methods(
     for method in methods:
         if verbose:
             print(f"  SHAP: {dataset} / {method} / {classifier}", flush=True)
-        result = compute_shap_values(dataset, method, classifier, minority_ratio)
+        result = compute_shap_values(
+            dataset, method, classifier, minority_ratio, sample_size=sample_size
+        )
         imp = global_importance(result.values, result.X_scaled)
         imp["imbalance_method"] = method
         frames.append(imp)
@@ -286,7 +296,13 @@ def plot_summary(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run SHAP explainability analysis.")
-    parser.add_argument("--dataset", default="uci")
+    parser.add_argument("--dataset", default="vrbancic")
+    parser.add_argument(
+        "--sample-size",
+        type=int,
+        default=None,
+        help="Instances explained; lower values trade precision for speed.",
+    )
     parser.add_argument("--classifier", default="random_forest")
     parser.add_argument("--method", default="smote")
     parser.add_argument("--ratio", type=float, default=MINORITY_RATIO)
@@ -301,11 +317,13 @@ def main() -> None:
             classifier=args.classifier,
             methods=args.methods,
             minority_ratio=args.ratio,
+            sample_size=args.sample_size,
         )
         return
 
     result = compute_shap_values(
-        args.dataset, args.method, args.classifier, args.ratio
+        args.dataset, args.method, args.classifier, args.ratio,
+        sample_size=args.sample_size,
     )
 
     print(f"\nGlobal feature importance ({args.dataset} / {args.method} / {args.classifier}):")

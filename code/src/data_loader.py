@@ -1,35 +1,56 @@
 """
 Dataset loading for the phishing detection experiments (Step 1 of the pipeline).
 
-Two benchmark datasets are supported:
+Two **naturally imbalanced** benchmark datasets are used in the study:
 
-* ``uci``       - UCI Phishing Websites (Mohammad & McCluskey, 2012)
-                  11,055 instances, 30 features.
-* ``hannousse`` - Hannousse & Yahiouche (2021) benchmark,
-                  11,430 URLs, 87 features.
+* ``vrbancic``  - Vrbancic et al. (2020), Data in Brief.
+                  88,647 instances, 111 features, 34.57% phishing (~1:1.89).
+* ``urlphish``  - URL-Phish (2025), Mendeley.
+                  116,600 URLs, 22 numeric features, 14.24% phishing (~1:6.02).
+
+Both datasets exhibit class imbalance as published, so no artificial skew is
+introduced. This matters because the research question concerns the treatment of
+class imbalance: applying SMOTE or cost-sensitive weighting to an already
+balanced dataset leaves the techniques with nothing to correct.
+
+Two earlier candidates were rejected for exactly that reason and are retained
+below only so that the claim can be reproduced:
+
+* ``uci``       - UCI Phishing Websites: 44.31% phishing (1:1.26).
+* ``hannousse`` - Hannousse & Yahiouche: 50.00% phishing (1:1.00), balanced by
+                  design.
 
 Label convention
 ----------------
-Throughout the project the **phishing class is the positive class (1)** and
-the legitimate class is the negative class (0). This matters because recall,
-precision, F1 and PR-AUC are all reported with respect to the positive class,
-and phishing detection is the minority-class problem of interest.
-
-Controlled imbalance
---------------------
-Both published datasets are close to balanced (UCI is ~44% phishing, the
-Hannousse benchmark is exactly 50/50). Because the research question concerns
-*class imbalance treatment*, an imbalance ratio can be induced by randomly
-downsampling the phishing (minority) class. See ``load_dataset`` for details.
+Throughout the project the **phishing class is the positive class (1)** and the
+legitimate class is the negative class (0). Recall, precision, F1 and PR-AUC are
+therefore all reported with respect to the phishing class, which is the
+minority-class problem of interest.
 """
 
 from __future__ import annotations
+
+import urllib.request
 
 import numpy as np
 import pandas as pd
 
 from config import DATA_DIR, RANDOM_STATE
 
+# --- Datasets used in the study -------------------------------------------
+VRBANCIC_FILE = DATA_DIR / "vrbancic_dataset_full.csv"
+VRBANCIC_URL = (
+    "https://raw.githubusercontent.com/GregaVrbancic/Phishing-Dataset/"
+    "master/dataset_full.csv"
+)
+
+URLPHISH_FILE = DATA_DIR / "urlphish_dataset.csv"
+URLPHISH_URL = (
+    "https://data.mendeley.com/public-files/datasets/65z9twcx3r/"
+    "files/0e9c55e4-9adb-43f5-8403-1bbd143ebdb6/file_downloaded"
+)
+
+# --- Rejected candidates, kept for verification only ----------------------
 UCI_CACHE = DATA_DIR / "uci_phishing.csv"
 HANNOUSSE_FILE = DATA_DIR / "dataset_B_05_2020.csv"
 HANNOUSSE_URL = (
@@ -38,14 +59,71 @@ HANNOUSSE_URL = (
 )
 
 
+def _download_if_missing(path, url: str) -> None:
+    """Fetch a dataset on first use and cache it under ``data/``.
+
+    An explicit User-Agent is sent because both GitHub and Mendeley reject
+    urllib's default agent with HTTP 403.
+    """
+    if path.exists():
+        return
+
+    print(f"  downloading {path.name} ...", flush=True)
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "Mozilla/5.0 (compatible; phishing-detection-research)"},
+    )
+    with urllib.request.urlopen(request, timeout=300) as response:
+        path.write_bytes(response.read())
+
+
 # ---------------------------------------------------------------------------
-# Individual loaders
+# Loaders for the datasets used in the study
+# ---------------------------------------------------------------------------
+def load_vrbancic() -> tuple[pd.DataFrame, pd.Series]:
+    """Load the Vrbancic et al. (2020) phishing dataset.
+
+    The target column ``phishing`` already follows the project convention
+    (1 = phishing, 0 = legitimate), so no remapping is needed. All 111 features
+    are numeric.
+    """
+    _download_if_missing(VRBANCIC_FILE, VRBANCIC_URL)
+
+    df = pd.read_csv(VRBANCIC_FILE)
+    y = df["phishing"].astype(int)
+    y.name = "phishing"
+    X = df.drop(columns=["phishing"])
+    return X, y
+
+
+def load_urlphish() -> tuple[pd.DataFrame, pd.Series]:
+    """Load the URL-Phish (2025) dataset.
+
+    The ``url``, ``dom`` and ``tld`` columns are string identifiers rather than
+    model features and are dropped, leaving 22 numeric lexical and structural
+    features. The ``label`` column already uses 1 for phishing.
+
+    Note that the published file contains 116,600 rows with 16,600 phishing
+    instances, which differs from the 111,660 / 11,660 figures quoted in the
+    accompanying paper. The counts measured from the data are used here.
+    """
+    _download_if_missing(URLPHISH_FILE, URLPHISH_URL)
+
+    df = pd.read_csv(URLPHISH_FILE)
+    y = df["label"].astype(int)
+    y.name = "phishing"
+    X = df.drop(columns=["label"])
+    return X, y
+
+
+# ---------------------------------------------------------------------------
+# Loaders for the rejected candidates (not part of the study)
 # ---------------------------------------------------------------------------
 def load_uci() -> tuple[pd.DataFrame, pd.Series]:
-    """Load the UCI Phishing Websites dataset.
+    """Load the UCI Phishing Websites dataset (rejected: near balanced).
 
     The raw target uses ``-1`` for phishing and ``1`` for legitimate; it is
-    remapped so that phishing is ``1`` and legitimate is ``0``.
+    remapped so that phishing is ``1``.
     """
     if UCI_CACHE.exists():
         df = pd.read_csv(UCI_CACHE)
@@ -64,16 +142,8 @@ def load_uci() -> tuple[pd.DataFrame, pd.Series]:
 
 
 def load_hannousse() -> tuple[pd.DataFrame, pd.Series]:
-    """Load the Hannousse & Yahiouche benchmark dataset.
-
-    The ``url`` column is dropped because it is an identifier rather than a
-    predictive feature. The ``status`` column is mapped to the project label
-    convention (phishing = 1).
-    """
-    if not HANNOUSSE_FILE.exists():
-        import urllib.request
-
-        urllib.request.urlretrieve(HANNOUSSE_URL, HANNOUSSE_FILE)
+    """Load the Hannousse & Yahiouche benchmark (rejected: balanced by design)."""
+    _download_if_missing(HANNOUSSE_FILE, HANNOUSSE_URL)
 
     df = pd.read_csv(HANNOUSSE_FILE)
     y = df["status"].map({"phishing": 1, "legitimate": 0}).astype(int)
@@ -82,11 +152,58 @@ def load_hannousse() -> tuple[pd.DataFrame, pd.Series]:
     return X, y
 
 
-LOADERS = {"uci": load_uci, "hannousse": load_hannousse}
+LOADERS = {
+    "vrbancic": load_vrbancic,
+    "urlphish": load_urlphish,
+    # Retained so the "these datasets are balanced" claim can be reproduced.
+    "uci": load_uci,
+    "hannousse": load_hannousse,
+}
 
 
 # ---------------------------------------------------------------------------
-# Controlled imbalance
+# Stratified subsampling
+# ---------------------------------------------------------------------------
+def stratified_subsample(
+    X: pd.DataFrame,
+    y: pd.Series,
+    n_samples: int,
+    random_state: int = RANDOM_STATE,
+) -> tuple[pd.DataFrame, pd.Series]:
+    """Reduce the dataset to ``n_samples`` rows, preserving the class ratio.
+
+    Both classes are sampled in proportion to their existing frequency, so the
+    natural imbalance is carried through unchanged. This is used purely to keep
+    training times tractable: the SVM has roughly quadratic complexity in the
+    number of training instances, which makes the full 88k-116k row datasets
+    impractical across a repeated 144-configuration sweep.
+
+    Returns the data unchanged when ``n_samples`` is at least the dataset size.
+    """
+    if n_samples is None or n_samples >= len(y):
+        return X.reset_index(drop=True), y.reset_index(drop=True)
+
+    rng = np.random.RandomState(random_state)
+    keep_parts = []
+
+    for label in (0, 1):
+        idx = y[y == label].index.to_numpy()
+        # Proportional allocation, with at least one instance per class.
+        n_take = int(round(n_samples * len(idx) / len(y)))
+        n_take = max(1, min(n_take, len(idx)))
+        keep_parts.append(rng.choice(idx, size=n_take, replace=False))
+
+    keep = np.concatenate(keep_parts)
+    keep.sort()
+
+    return (
+        X.loc[keep].reset_index(drop=True),
+        y.loc[keep].reset_index(drop=True),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Controlled imbalance (not used in the main study)
 # ---------------------------------------------------------------------------
 def induce_imbalance(
     X: pd.DataFrame,
@@ -96,16 +213,12 @@ def induce_imbalance(
 ) -> tuple[pd.DataFrame, pd.Series]:
     """Randomly downsample the phishing class to a target proportion.
 
-    Parameters
-    ----------
-    minority_ratio
-        Desired share of phishing instances in the returned data, e.g. ``0.10``
-        for a 10% phishing / 90% legitimate split.
+    Retained for the optional severity sensitivity analysis discussed in
+    Chapter 6. It is **not** applied in the main experiments, because both
+    datasets are already imbalanced as published.
 
-    Notes
-    -----
     Only the minority (phishing) class is reduced; every legitimate instance is
-    retained. This produces a realistic imbalance without fabricating data.
+    retained, so no data is fabricated.
     """
     if not 0 < minority_ratio < 0.5:
         raise ValueError("minority_ratio must be between 0 and 0.5 (exclusive)")
@@ -132,33 +245,40 @@ def load_dataset(
     name: str,
     minority_ratio: float | None = None,
     random_state: int = RANDOM_STATE,
+    subsample: int | None = None,
 ) -> tuple[pd.DataFrame, pd.Series]:
-    """Load a dataset by name, optionally inducing a target imbalance ratio.
+    """Load a dataset by name.
 
     Parameters
     ----------
     name
-        Either ``"uci"`` or ``"hannousse"``.
+        One of ``"vrbancic"``, ``"urlphish"`` (used in the study) or ``"uci"``,
+        ``"hannousse"`` (rejected candidates).
     minority_ratio
-        If given, the phishing class is downsampled to this proportion.
-        If ``None`` the dataset is returned with its native class balance.
+        If given, the phishing class is downsampled to this proportion. Left as
+        ``None`` for the main experiments, since both datasets are already
+        imbalanced.
     random_state
-        Controls which minority instances are retained when inducing the
-        imbalance. Varying this across repeated runs is what makes each repeat
-        an independent sample rather than a re-run of the same subset.
+        Controls the subsampling draw. Varying it across repeated runs is what
+        makes each replication an independent sample.
+    subsample
+        If given, reduce to this many rows while preserving the class ratio.
     """
     if name not in LOADERS:
         raise ValueError(f"Unknown dataset '{name}'. Expected one of {list(LOADERS)}.")
 
     X, y = LOADERS[name]()
 
-    # Guard against non-numeric columns slipping through.
+    # Drop identifier and other non-numeric columns.
     non_numeric = X.select_dtypes(exclude="number").columns.tolist()
     if non_numeric:
         X = X.drop(columns=non_numeric)
 
     if minority_ratio is not None:
         X, y = induce_imbalance(X, y, minority_ratio, random_state=random_state)
+
+    if subsample is not None:
+        X, y = stratified_subsample(X, y, subsample, random_state=random_state)
 
     return X, y
 
@@ -167,9 +287,12 @@ def describe(
     name: str,
     minority_ratio: float | None = None,
     random_state: int = RANDOM_STATE,
+    subsample: int | None = None,
 ) -> dict:
-    """Return summary statistics used for the dataset table in Chapter 5."""
-    X, y = load_dataset(name, minority_ratio, random_state=random_state)
+    """Return summary statistics used for the dataset table in Chapter 4."""
+    X, y = load_dataset(
+        name, minority_ratio, random_state=random_state, subsample=subsample
+    )
     n_pos = int((y == 1).sum())
     n_neg = int((y == 0).sum())
     return {
@@ -185,5 +308,16 @@ def describe(
 
 
 if __name__ == "__main__":
-    for ds in LOADERS:
-        print(describe(ds))
+    from config import DATASETS, SUBSAMPLE_SIZE
+
+    print("Datasets used in the study (as published):")
+    for ds in DATASETS:
+        print("  ", describe(ds))
+
+    print(f"\nAfter stratified subsampling to {SUBSAMPLE_SIZE} rows:")
+    for ds in DATASETS:
+        print("  ", describe(ds, subsample=SUBSAMPLE_SIZE))
+
+    print("\nRejected candidates (retained to evidence the balance claim):")
+    for ds in ("uci", "hannousse"):
+        print("  ", describe(ds))

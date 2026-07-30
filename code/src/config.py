@@ -37,17 +37,23 @@ CV_FOLDS = 5              # stratified 5-fold cross-validation
 SCORING = "f1"            # metric used to select hyperparameters
 ALPHA = 0.05              # significance level for statistical tests
 
-# Controlled imbalance.
-# Both published datasets are close to balanced (UCI 44.3% phishing, the
-# Hannousse benchmark exactly 50%). A 10% minority share (~1:9) is induced so
-# that imbalance treatment has a measurable effect while retaining enough
-# phishing instances in the held-out test set for reliable estimation.
-MINORITY_RATIO = 0.10
+# Induced imbalance is NOT used in the main experiments: both datasets in
+# DATASETS are already imbalanced as published (Vrbancic ~1:1.89, URL-Phish
+# ~1:6.02). This is retained only for the optional severity sensitivity
+# analysis described in Chapter 6.
+MINORITY_RATIO = None
 
 # Ratios used for the optional sensitivity analysis (Chapter 6).
 SENSITIVITY_RATIOS = [0.05, 0.10, 0.20]
 
-DATASETS = ["uci", "hannousse"]
+DATASETS = ["vrbancic", "urlphish"]
+
+# Stratified subsampling size. Both datasets are large (88k and 116k rows) and
+# the SVM scales roughly quadratically in training set size, which makes the
+# full data impractical across a repeated 144-configuration sweep. Subsampling
+# preserves the natural class ratio exactly; only the volume is reduced.
+# Set to None to use the datasets in full.
+SUBSAMPLE_SIZE = 20_000
 
 IMBALANCE_METHODS = [
     "none",                     # baseline: no treatment
@@ -87,6 +93,9 @@ CLASSIFIER_LABELS = {
 }
 
 DATASET_LABELS = {
+    "vrbancic": "Vrbancic et al. (1:1.89)",
+    "urlphish": "URL-Phish (1:6.02)",
+    # Rejected candidates.
     "uci": "UCI Phishing Websites",
     "hannousse": "Hannousse & Yahiouche",
 }

@@ -33,6 +33,7 @@ from config import (
     MINORITY_RATIO,
     RANDOM_STATE,
     RESULTS_DIR,
+    SUBSAMPLE_SIZE,
 )
 from data_loader import load_dataset
 from evaluation import evaluate
@@ -48,18 +49,18 @@ def config_id(
     dataset: str,
     method: str,
     classifier: str,
-    ratio: float,
+    ratio: float | None,
     seed: int = RANDOM_STATE,
 ) -> str:
     """Stable identifier used for result rows and prediction filenames.
 
     The seed is part of the identifier so that repeated runs do not overwrite
-    one another's saved predictions.
+    one another's saved predictions. ``ratio`` is ``None`` in the main
+    experiments, where each dataset's own class distribution is used, and is
+    recorded as ``rnative`` in that case.
     """
-    return (
-        f"{dataset}__{method}__{classifier}"
-        f"__r{int(round(ratio * 100))}__s{seed}"
-    )
+    ratio_tag = "native" if ratio is None else f"{int(round(ratio * 100))}"
+    return f"{dataset}__{method}__{classifier}__r{ratio_tag}__s{seed}"
 
 
 def run_configuration(
@@ -79,7 +80,12 @@ def run_configuration(
     """
     started = time.time()
 
-    X, y = load_dataset(dataset, minority_ratio=minority_ratio, random_state=seed)
+    X, y = load_dataset(
+        dataset,
+        minority_ratio=minority_ratio,
+        random_state=seed,
+        subsample=SUBSAMPLE_SIZE,
+    )
     X_train, X_test, y_train, y_test = prepare(X, y, random_state=seed)
 
     search = build_search(classifier, method, random_state=seed)
@@ -155,10 +161,12 @@ def run_all(
 
     if verbose:
         seed_note = f"{len(seeds)} seed(s) {seeds}" if len(seeds) > 1 else f"seed {seeds[0]}"
-        print(
-            f"Running {total} configurations at {minority_ratio:.0%} "
-            f"minority ratio, {seed_note}\n"
+        ratio_note = (
+            "each dataset's own class distribution"
+            if minority_ratio is None
+            else f"an induced {minority_ratio:.0%} minority ratio"
         )
+        print(f"Running {total} configurations using {ratio_note}, {seed_note}\n")
 
     for i, (seed, dataset, method, classifier) in enumerate(combinations, start=1):
         if verbose:
