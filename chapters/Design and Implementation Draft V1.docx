@@ -17,11 +17,17 @@ Source: Author's own work.
 
 4.3 Dataset Design
 
-Two datasets are used in the implementation. The first is the UCI Phishing Websites dataset, which contains 11,055 instances and 30 features. It is a widely used benchmark in phishing detection research and includes structural and lexical indicators that can be used to identify phishing websites. The dataset is complete and does not contain missing values, which makes it suitable for controlled machine learning experiments.archive.ics.uciDraft-Final-Version.docx
+Dataset selection was governed by a requirement that follows directly from the research question. Because this study evaluates techniques for treating class imbalance, the datasets themselves must exhibit class imbalance. Several widely cited phishing benchmarks do not: the UCI Phishing Websites dataset contains 44.31% phishing instances (an imbalance ratio of approximately 1:1.26), and the benchmark of Hannousse and Yahiouche is balanced by design at exactly 50% (1:1.00). Applied to such data, oversampling methods have almost nothing to correct, and cost-sensitive weighting reduces to no treatment at all because the computed class weights approach unity. Both datasets were therefore examined and rejected as unsuitable for this particular study, although they remain valuable benchmarks for classification accuracy more generally.
 
-The second dataset is the benchmark dataset proposed by Hannousse and Yahiouche, which contains 11,430 URLs and 87 extracted features. These are divided into URL syntax and structure features, page content features and external-service features. The dataset was designed for reproducible phishing detection benchmarking and provides a richer feature space for comparative analysis.Draft-Final-Version.docx
+The first dataset used is that of Vrbančič et al. (2020), which contains 88,647 instances described by 111 numeric features extracted from the URL, the domain and the hosting infrastructure. Of these instances, 30,647 are phishing and 58,000 are legitimate, giving 34.57% phishing and an imbalance ratio of approximately 1:1.89. The dataset is complete and contains no missing values.
 
-Using both datasets improves the design of the study because it allows the comparison of imbalance treatment techniques across different benchmark settings. The UCI dataset provides a compact and widely cited baseline, while the Hannousse and Yahiouche dataset provides a richer feature space and a more modern benchmark structure. This combination supports cross-dataset interpretation and reduces the risk that the findings are specific to only one representation. Using two datasets enables external validation of the findings and reduces the likelihood that conclusions are specific to the characteristics of a single benchmark dataset.Draft-Final-Version.docx
+The second dataset is URL-Phish (2025), which contains 116,600 URLs described by 22 numeric lexical and structural features such as URL length, domain length, digit ratio, entropy and HTTPS usage. It comprises 16,600 phishing and 100,000 legitimate instances, giving 14.24% phishing and an imbalance ratio of approximately 1:6.02. The phishing samples were drawn from the PhishTank repository between November 2024 and September 2025, making this a substantially more recent benchmark than most phishing datasets in circulation.
+
+It should be noted that the publication accompanying URL-Phish describes 111,660 URLs of which 11,660 are phishing, whereas the published data file contains 116,600 rows of which 16,600 are phishing. The counts reported here were measured directly from the distributed file and are the figures used throughout this study.
+
+Using these two datasets strengthens the design in three respects. First, both are imbalanced as published, so the imbalance treatment techniques operate on genuine skew rather than on an artificially constructed distribution. Second, the two datasets differ substantially in the severity of that skew, at approximately 1:1.89 and 1:6.02, which permits analysis of whether the effectiveness of a technique depends on how severe the imbalance is. Third, they differ considerably in feature richness, at 111 and 22 features respectively, which supports cross-dataset interpretation and reduces the likelihood that conclusions are specific to a single feature representation.
+
+Both datasets are large relative to the computational cost of the experimental design. Because the Support Vector Machine has approximately quadratic complexity in the number of training instances, and because the full comparison matrix is repeated across three random seeds, each dataset is reduced to 20,000 instances by stratified sampling before the experiments are run. Sampling is proportional within each class, so the natural imbalance ratio is preserved exactly: the reduced Vrbančič data retains 34.57% phishing instances and the reduced URL-Phish data retains 14.23%. Only the volume of data is reduced; the class distribution under study is unaffected.
 
 Table 4.1 Dataset summary
 
@@ -31,7 +37,52 @@ Table 4.1 Dataset summary
 
 	Features
 
+	Phishing
+
+	Imbalance ratio
+
 	Key characteristics
+
+
+	Vrbančič et al. (2020)
+
+	88,647
+
+	111
+
+	30,647 (34.57%)
+
+	1:1.89
+
+	Naturally imbalanced; URL, domain and hosting features; no missing values
+
+
+	URL-Phish (2025)
+
+	116,600
+
+	22
+
+	16,600 (14.24%)
+
+	1:6.02
+
+	Naturally imbalanced; recent PhishTank data (Nov 2024 to Sep 2025); lexical and structural features
+
+
+Table 4.2 Datasets examined and rejected as unsuitable
+
+	Dataset
+
+	Instances
+
+	Features
+
+	Phishing
+
+	Imbalance ratio
+
+	Reason for exclusion
 
 
 	UCI Phishing Websites
@@ -40,25 +91,33 @@ Table 4.1 Dataset summary
 
 	30
 
-	Complete, widely used benchmark, structural and lexical indicators
+	4,898 (44.31%)
+
+	1:1.26
+
+	Close to balanced; leaves imbalance treatment with little to correct
 
 
-	Hannousse and Yahiouche benchmark dataset
+	Hannousse and Yahiouche
 
 	11,430
 
 	87
 
-	Reproducible benchmark, URL, content and external-service features
+	5,715 (50.00%)
+
+	1:1.00
+
+	Balanced by design; cost-sensitive weighting reduces to no treatment
 
 
 
 
 4.4 Data Preprocessing
 
-The preprocessing stage begins with loading both datasets into the experimental environment and checking their structure. For the UCI dataset, this involves verifying the labels, checking for duplicates and confirming that all 30 attributes are correctly encoded. For the Hannousse and Yahiouche dataset, preprocessing includes removing any URL identifiers that are not required for modelling and confirming that feature values are suitable for input to the classifiers.Draft-Final-Version.docx
+The preprocessing stage begins with loading both datasets into the experimental environment and checking their structure. Labels are mapped to a single convention in which the phishing class is the positive class, since the Vrbančič data encodes phishing as 1 while URL-Phish uses a separate label column; all reported precision, recall, F1 and PR-AUC values therefore refer to the phishing class. For the URL-Phish dataset, preprocessing removes the URL, domain and top-level domain columns, which are string identifiers rather than model features, leaving the 22 numeric attributes. Structural cleaning is then applied identically to both datasets: constant and duplicated columns are removed, and any non-finite values are replaced. Neither dataset contains missing values.Draft-Final-Version.docx
 
-The datasets are then split into training and test subsets using stratified sampling. Stratification is essential because it preserves the class distribution in both sets and ensures that the minority class remains visible in the test data. This is particularly important in an imbalanced classification task such as phishing detection, where the minority class is the main class of interest. The test set is held back throughout all balancing procedures so that performance evaluation remains unbiased. All experiments use a fixed random seed (random_state=42) to ensure reproducibility across runs.machinelearningmastery
+The datasets are then split into training and test subsets using stratified sampling. Stratification is essential because it preserves the class distribution in both sets and ensures that the minority class remains visible in the test data. This is particularly important in an imbalanced classification task such as phishing detection, where the minority class is the main class of interest. The test set is held back throughout all balancing procedures so that performance evaluation remains unbiased. All experiments use fixed random seeds to ensure reproducibility across runs. The complete comparison matrix is executed three times under the seeds 42, 1 and 2. Each seed controls the stratified subsampling, the train-test split, the cross-validation folds, the resampling procedures and the classifiers, so each repetition constitutes an independent replication rather than a re-execution of the same partition. Reported metrics are means across the three replications, and each replication contributes an additional matched block to the statistical significance tests described in Section 4.9.machinelearningmastery
 
 Where feature scaling is needed, it is applied only after splitting and only using statistics derived from the training data. This is especially relevant for the Support Vector Machine classifier, which is sensitive to feature magnitude. Tree-based models such as Decision Tree and Random Forest are generally less dependent on scaling, but the same preprocessing logic is maintained across all experiments.Draft-Final-Version.docx
 
@@ -216,7 +275,7 @@ Including statistical testing strengthens the dissertation because it prevents t
 
 4.10 Implementation Workflow
 
-The implementation workflow follows a repeated experimental sequence. First, the dataset is loaded and checked. Second, the train-test split is created using stratified sampling. Third, one imbalance treatment technique is applied within the training portion of each cross-validation fold. Fourth, one classifier is trained on the treated data. Fifth, the model is evaluated on the untouched validation fold and finally on the held-out test set. This process is repeated across all combinations of dataset, imbalance treatment technique and classifier, yielding a total of 42 experimental configurations (2 datasets × 7 imbalance techniques × 3 classifiers).machinelearningmasteryDraft-Final-Version.docx
+The implementation workflow follows a repeated experimental sequence. First, the dataset is loaded and checked. Second, the train-test split is created using stratified sampling. Third, one imbalance treatment technique is applied within the training portion of each cross-validation fold. Fourth, one classifier is trained on the treated data. Fifth, the model is evaluated on the untouched validation fold and finally on the held-out test set. This process is repeated across all combinations of dataset, imbalance treatment technique and classifier, yielding a total of 42 experimental configurations (2 datasets × 7 imbalance techniques × 3 classifiers). An untreated baseline condition is additionally run for each dataset and classifier, so that the effect attributable to imbalance treatment can be isolated by comparison, giving 48 conditions in total. Because the entire matrix is replicated under three random seeds, 144 individual experimental runs are executed.machinelearningmasteryDraft-Final-Version.docx
 
 This repeated workflow produces a structured comparison matrix that can be used to analyse which balancing methods work best under which conditions. For example, it becomes possible to compare whether SMOTE-based techniques improve recall more effectively than undersampling, or whether Random Forest benefits more consistently from resampling than SVM. The implementation is therefore designed not just to build models, but to generate evidence that answers the dissertation research question.Draft-Final-Version.docx
 
@@ -255,4 +314,8 @@ He, H., Bai, Y., Garcia, E. A. and Li, S. (2008) 'ADASYN: Adaptive Synthetic Sam
 Lemaître, G., Nogueira, F. and Aridas, C. K. (2017) 'Imbalanced-learn: A Python Toolbox to Tackle the Curse of Imbalanced Datasets in Machine Learning', Journal of Machine Learning Research, 18(17), pp. 1–5.
 
 Mohammad, R. M. and McCluskey, L. (2012) Phishing Websites. UCI Machine Learning Repository.archive.ics.uci
+
+Vrbančič, G., Fister, I. and Podgorelec, V. (2020) 'Datasets for phishing websites detection', Data in Brief, 33, 106438.
+
+URL-Phish (2025) URL-Phish: A Feature-Engineered Dataset for Phishing Detection. Mendeley Data, V1. doi:10.17632/65z9twcx3r.1.
 

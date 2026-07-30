@@ -1,4 +1,4 @@
-| Dataset               | Best configuration         |   Best F1 |   Best recall |   Best PR-AUC | Worst configuration                  |   Worst F1 |   Worst recall |   Worst PR-AUC |   F1 gap |
-|:----------------------|:---------------------------|----------:|--------------:|--------------:|:-------------------------------------|-----------:|---------------:|---------------:|---------:|
-| Hannousse & Yahiouche | Random Forest + SMOTETomek |    0.8883 |        0.8766 |        0.9558 | Decision Tree + Random Undersampling |     0.682  |         0.895  |         0.5428 |   0.2064 |
-| UCI Phishing Websites | Random Forest + ADASYN     |    0.9289 |        0.8929 |        0.9653 | Decision Tree + Random Undersampling |     0.7219 |         0.9051 |         0.6806 |   0.207  |
+| Dataset                  | Best configuration    |   Best F1 |   Best recall |   Best PR-AUC | Worst configuration                  |   Worst F1 |   Worst recall |   Worst PR-AUC |   F1 gap |
+|:-------------------------|:----------------------|----------:|--------------:|--------------:|:-------------------------------------|-----------:|---------------:|---------------:|---------:|
+| URL-Phish (1:6.02)       | Random Forest + SMOTE |    0.9167 |        0.9162 |        0.97   | Decision Tree + Random Undersampling |     0.8115 |         0.9192 |         0.767  |   0.1052 |
+| Vrbancic et al. (1:1.89) | Random Forest + SMOTE |    0.942  |        0.9588 |        0.9856 | Support Vector Machine + ADASYN      |     0.9001 |         0.9694 |         0.9639 |   0.0419 |
