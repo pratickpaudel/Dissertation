@@ -7,6 +7,8 @@ Comparative study of class imbalance treatment techniques for machine learning-b
 ```
 .
 ├── chapters/                 # Dissertation chapter drafts and templates (.docx)
+│   ├── Methodology Final.docx                       # Chapter 3
+│   ├── Chapter3_Revisions.md                        # Pending edits to Chapter 3
 │   ├── Design and Implementation Draft V1.docx      # Chapter 4
 │   ├── Chapter 5 Results and Evaluation Template.docx
 │   ├── Chapter 6 Discussion Template.docx
@@ -15,7 +17,7 @@ Comparative study of class imbalance treatment techniques for machine learning-b
 │   ├── Figure_4_1_System_Architecture.*             # Fig 4.1 modular pipeline
 │   ├── Figure_4_2_Preprocessing_Workflow.*         # Fig 4.2 preprocessing
 │   ├── Figure_4_3_Classifier_Comparison.*          # Fig 4.3 classifier comparison
-│   └── Figure_4_4_Experimental_Procedure.*         # Fig 4.4 experimental procedure
+│   └── Figure_3_1_Experimental_Procedure.*         # Fig 3.1 (Section 3.9) experimental procedure
 │       (each available as .svg source, .png, _HighRes.png and .pdf)
 └── code/                     # Implementation of the experimental pipeline
     ├── README.md             # Step-by-step implementation guide
