@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="900" viewBox="0 0 800 900" font-family="Arial, Helvetica, sans-serif">
+  <rect x="0" y="0" width="800" height="900" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#333333"/>
+    </marker>
+  </defs>
+
+  <!-- ===== Input ===== -->
+  <rect x="150" y="26" width="500" height="60" rx="8" fill="#fbf5ea" stroke="#8a6d3b" stroke-width="2"/>
+  <text x="400" y="48" text-anchor="middle" font-size="13" font-weight="bold" fill="#5c4a29">Treated training data</text>
+  <text x="400" y="66" text-anchor="middle" font-size="11" fill="#555555">one imbalance treatment technique applied within each fold</text>
+  <text x="400" y="80" text-anchor="middle" font-size="10" font-style="italic" fill="#777777">the same treated data is presented to all three classifiers</text>
+
+  <!-- fan out -->
+  <line x1="400" y1="86" x2="400" y2="106" stroke="#333333" stroke-width="2"/>
+  <line x1="146" y1="106" x2="654" y2="106" stroke="#333333" stroke-width="2"/>
+  <line x1="146" y1="106" x2="146" y2="132" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="400" y1="106" x2="400" y2="132" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="654" y1="106" x2="654" y2="132" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Three classifier columns ===== -->
+  <!-- Decision Tree -->
+  <rect x="30" y="138" width="232" height="176" rx="10" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
+  <text x="146" y="162" text-anchor="middle" font-size="14" font-weight="bold" fill="#1f4a30">Decision Tree</text>
+  <text x="146" y="180" text-anchor="middle" font-size="10.5" font-style="italic" fill="#4a7a5e">single-tree, rule-based</text>
+  <line x1="48" y1="190" x2="244" y2="190" stroke="#9ec7b0" stroke-width="1"/>
+  <text x="146" y="208" text-anchor="middle" font-size="11" fill="#1a1a1a">Transparent baseline; shows</text>
+  <text x="146" y="223" text-anchor="middle" font-size="11" fill="#1a1a1a">how treatment reshapes a</text>
+  <text x="146" y="238" text-anchor="middle" font-size="11" fill="#1a1a1a">simple decision boundary</text>
+  <rect x="48" y="250" width="196" height="52" rx="5" fill="#ffffff" stroke="#6aa383" stroke-width="1.2"/>
+  <text x="146" y="266" text-anchor="middle" font-size="10" font-weight="bold" fill="#1f4a30">Tuned parameters</text>
+  <text x="146" y="280" text-anchor="middle" font-size="10" fill="#555555">max_depth, criterion</text>
+  <text x="146" y="294" text-anchor="middle" font-size="10" fill="#555555">min_samples_split</text>
+
+  <!-- Random Forest -->
+  <rect x="284" y="138" width="232" height="176" rx="10" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
+  <text x="400" y="162" text-anchor="middle" font-size="14" font-weight="bold" fill="#1f4a30">Random Forest</text>
+  <text x="400" y="180" text-anchor="middle" font-size="10.5" font-style="italic" fill="#4a7a5e">bagged ensemble</text>
+  <line x1="302" y1="190" x2="498" y2="190" stroke="#9ec7b0" stroke-width="1"/>
+  <text x="400" y="208" text-anchor="middle" font-size="11" fill="#1a1a1a">Reduces variance; expected</text>
+  <text x="400" y="223" text-anchor="middle" font-size="11" fill="#1a1a1a">to be most robust when</text>
+  <text x="400" y="238" text-anchor="middle" font-size="11" fill="#1a1a1a">minority examples are few</text>
+  <rect x="302" y="250" width="196" height="52" rx="5" fill="#ffffff" stroke="#6aa383" stroke-width="1.2"/>
+  <text x="400" y="266" text-anchor="middle" font-size="10" font-weight="bold" fill="#1f4a30">Tuned parameters</text>
+  <text x="400" y="280" text-anchor="middle" font-size="10" fill="#555555">n_estimators, max_depth</text>
+  <text x="400" y="294" text-anchor="middle" font-size="10" fill="#555555">max_features</text>
+
+  <!-- SVM -->
+  <rect x="538" y="138" width="232" height="176" rx="10" fill="#eafbf0" stroke="#2e6b46" stroke-width="2"/>
+  <text x="654" y="162" text-anchor="middle" font-size="14" font-weight="bold" fill="#1f4a30">Support Vector Machine</text>
+  <text x="654" y="180" text-anchor="middle" font-size="10.5" font-style="italic" fill="#4a7a5e">margin-based</text>
+  <line x1="556" y1="190" x2="752" y2="190" stroke="#9ec7b0" stroke-width="1"/>
+  <text x="654" y="208" text-anchor="middle" font-size="11" fill="#1a1a1a">Sensitive to feature scale</text>
+  <text x="654" y="223" text-anchor="middle" font-size="11" fill="#1a1a1a">and to synthetic points</text>
+  <text x="654" y="238" text-anchor="middle" font-size="11" fill="#1a1a1a">placed near the margin</text>
+  <rect x="556" y="250" width="196" height="52" rx="5" fill="#ffffff" stroke="#6aa383" stroke-width="1.2"/>
+  <text x="654" y="266" text-anchor="middle" font-size="10" font-weight="bold" fill="#1f4a30">Tuned parameters</text>
+  <text x="654" y="280" text-anchor="middle" font-size="10" fill="#555555">C, gamma</text>
+  <text x="654" y="294" text-anchor="middle" font-size="10" fill="#555555">kernel</text>
+
+  <!-- arrows down into GridSearchCV band -->
+  <line x1="146" y1="314" x2="146" y2="342" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="400" y1="314" x2="400" y2="342" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="654" y1="314" x2="654" y2="342" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Shared tuning band ===== -->
+  <rect x="30" y="348" width="740" height="68" rx="10" fill="#eaf2fb" stroke="#2c3e66" stroke-width="2"/>
+  <text x="400" y="372" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a2b4a">Identical tuning protocol for every classifier</text>
+  <text x="400" y="391" text-anchor="middle" font-size="11" fill="#555555">GridSearchCV with stratified 5-fold cross-validation; selection by F1 on the phishing class</text>
+  <text x="400" y="408" text-anchor="middle" font-size="11" fill="#555555">winning configuration refit on the full treated training set</text>
+
+  <line x1="400" y1="416" x2="400" y2="448" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Evaluation ===== -->
+  <rect x="120" y="454" width="560" height="66" rx="10" fill="#eaf2fb" stroke="#2c3e66" stroke-width="2"/>
+  <text x="400" y="478" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a2b4a">Evaluation on the untouched test set</text>
+  <text x="400" y="497" text-anchor="middle" font-size="11" fill="#555555">Precision, Recall, F1-score, ROC-AUC, PR-AUC, MCC</text>
+  <text x="400" y="512" text-anchor="middle" font-size="10" font-style="italic" fill="#777777">same metrics, same test partition, so differences are attributable to the classifier</text>
+
+  <line x1="400" y1="520" x2="400" y2="552" stroke="#333333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Comparison basis ===== -->
+  <rect x="30" y="558" width="740" height="126" rx="10" fill="#f3eafb" stroke="#5a3d7a" stroke-width="2"/>
+  <text x="400" y="582" text-anchor="middle" font-size="13" font-weight="bold" fill="#42295c">Basis for comparison</text>
+
+  <rect x="52" y="596" width="222" height="72" rx="6" fill="#ffffff" stroke="#9478b0" stroke-width="1.5"/>
+  <text x="163" y="616" text-anchor="middle" font-size="11.5" fill="#1a1a1a">Aggregated performance</text>
+  <text x="163" y="633" text-anchor="middle" font-size="10.5" fill="#555555">mean across all 7 techniques,</text>
+  <text x="163" y="648" text-anchor="middle" font-size="10.5" fill="#555555">both datasets and 3 seeds</text>
+  <text x="163" y="662" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5f96">42 matched blocks</text>
+
+  <rect x="289" y="596" width="222" height="72" rx="6" fill="#ffffff" stroke="#9478b0" stroke-width="1.5"/>
+  <text x="400" y="616" text-anchor="middle" font-size="11.5" fill="#1a1a1a">Friedman test</text>
+  <text x="400" y="633" text-anchor="middle" font-size="10.5" fill="#555555">ranks the three classifiers</text>
+  <text x="400" y="648" text-anchor="middle" font-size="10.5" fill="#555555">within each block</text>
+  <text x="400" y="662" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5f96">post-hoc Wilcoxon, Holm</text>
+
+  <rect x="526" y="596" width="222" height="72" rx="6" fill="#ffffff" stroke="#9478b0" stroke-width="1.5"/>
+  <text x="637" y="616" text-anchor="middle" font-size="11.5" fill="#1a1a1a">McNemar's test</text>
+  <text x="637" y="633" text-anchor="middle" font-size="10.5" fill="#555555">pairwise on identical</text>
+  <text x="637" y="648" text-anchor="middle" font-size="10.5" fill="#555555">test instances</text>
+  <text x="637" y="662" text-anchor="middle" font-size="10" font-style="italic" fill="#7a5f96">paired predictions</text>
+
+  <!-- ===== Controlled comparison note ===== -->
+  <rect x="30" y="704" width="740" height="86" rx="10" fill="#f7f7f7" stroke="#888888" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="400" y="728" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#444444">What is held constant</text>
+  <text x="400" y="748" text-anchor="middle" font-size="11" fill="#555555">Each classifier receives the same partitions, the same treated data and the same tuning protocol.</text>
+  <text x="400" y="765" text-anchor="middle" font-size="11" fill="#555555">Only the learning algorithm varies, so observed differences isolate the effect of the classifier</text>
+  <text x="400" y="782" text-anchor="middle" font-size="11" fill="#555555">rather than of preprocessing or experimental setup.</text>
+
+  <!-- ===== Repetition note ===== -->
+  <text x="400" y="828" text-anchor="middle" font-size="11" font-style="italic" fill="#b03a2e">The whole comparison is repeated for each of the 7 imbalance treatment techniques, on both datasets,</text>
+  <text x="400" y="846" text-anchor="middle" font-size="11" font-style="italic" fill="#b03a2e">under 3 random seeds, giving 42 measurements per classifier.</text>
+</svg>
