@@ -5,7 +5,7 @@ Chapter 4: a comparison of class imbalance treatment techniques for machine
 learning based phishing website detection.
 
 Each stage below corresponds to one node in the experimental procedure diagram
-(`../figures/Figure_4_4_Experimental_Procedure.png`).
+(`../figures/Figure_Experimental_Procedure.png`).
 
 ---
 

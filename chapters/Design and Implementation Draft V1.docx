@@ -279,8 +279,7 @@ The implementation workflow follows a repeated experimental sequence. First, the
 
 This repeated workflow produces a structured comparison matrix that can be used to analyse which balancing methods work best under which conditions. For example, it becomes possible to compare whether SMOTE-based techniques improve recall more effectively than undersampling, or whether Random Forest benefits more consistently from resampling than SVM. The implementation is therefore designed not just to build models, but to generate evidence that answers the dissertation research question.Draft-Final-Version.docx
 
-Figure 4.4 Experimental workflow for comparative evaluation.
-Source: Author's own work.
+The overall sequence described here is the one set out in the research design, and is illustrated in Figure 3.x in Section 3.9. This section documents the implementation-level detail of that sequence rather than restating the design.
 
 4.11 Software and Implementation Environment
 
