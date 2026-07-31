@@ -224,34 +224,49 @@ Source: Author's own work.
 
 ---
 
-## 4. Section 3.10 — smaller wording changes
+## 4. Section 3.10 — Explainability and Dashboard Evaluation
 
-Two points, both discussed previously.
+**Replace the whole section.** The dashboard described here has been implemented,
+so the section can now state what it does rather than what it will do. Two
+problems in the existing text are also corrected: a grammatical error, and a
+claim to evaluate usability that no planned procedure supports.
 
-**Grammar.** Replace:
+### 3.10 Explainability and Dashboard Evaluation
 
-> This will enable to describe the character of a website (whether it is a
-> phishing or a legitimate site) and compare the changes of feature importance
-> over classifiers and imbalance treatment methods.
+Alongside the quantitative comparison, the best-performing models are examined
+using explainable artificial intelligence techniques. SHAP (SHapley Additive
+exPlanations) is used to determine the global and local contributions of
+individual features to model predictions. This makes it possible to explain why a
+given website is classified as phishing or legitimate, and to compare how feature
+importance shifts across classifiers and imbalance treatment methods.
 
-with:
+The comparison of attributions across treatment methods is of particular
+relevance to the research question. If applying a resampling technique changes
+which features a model relies upon, then imbalance treatment affects not only
+predictive performance but also the evidential basis of the decision. Establishing
+whether this occurs is therefore part of characterising what these techniques do.
 
-> This makes it possible to explain why a given website is classified as phishing
-> or legitimate, and to compare how feature importance shifts across classifiers
-> and imbalance treatment methods.
+The SHAP outputs are presented through a dashboard implemented in Streamlit,
+which serves as an operational interface for inspecting predictions and feature
+attributions alongside the summary performance results. The dashboard allows an
+individual prediction to be decomposed into the feature contributions that
+produced it, and allows those contributions to be read in the context of the
+aggregate findings of the study. Its purpose is to make the model's reasoning
+inspectable rather than requiring it to be accepted on trust.
 
-**Usability claim.** The sentence describing the dashboard as providing "a
-practical evaluation layer for interpretability and usability" invites the
-question of how usability was evaluated. Unless a user study with participants
-and an instrument such as SUS is planned, it is safer to present the dashboard as
-a demonstration artefact:
+The dashboard is a demonstration artefact. It illustrates how the explainability
+outputs could support interpretation in an operational setting, but it is not
+subjected to a formal usability study, since that would require a participant
+sample and a validated instrument and lies beyond the scope of this dissertation.
+The implementation is described in Section 4.12.
 
-> The SHAP outputs are surfaced through a Streamlit-based dashboard that serves as
-> a demonstration interface, presenting predictions and feature attributions
-> alongside summary performance metrics. The dashboard illustrates how the
-> explainability outputs could support interpretation in an operational setting;
-> it is not subjected to a formal usability study, which lies beyond the scope of
-> this dissertation.
+### Note on the original wording
+
+The phrase "a practical evaluation layer for interpretability and usability"
+should not be retained. It commits the study to a usability evaluation, which
+invites the question of participants, tasks and instrument. Presenting the
+dashboard as a demonstration artefact, as above, describes what was actually done
+and removes that exposure.
 
 ---
 
