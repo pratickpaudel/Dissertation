@@ -229,6 +229,50 @@ analysis, or reduce `sample_size`.
 Local explanations report feature values on their **original scale**, not the
 standardised values the model sees, so they are readable.
 
+### Step 11: Explainability dashboard (Section 3.10)
+
+The dashboard needs a persisted model, so train one per dataset first. The
+configuration is chosen automatically from the experiment results, so run the
+experiments beforehand:
+
+```bash
+cd src
+../.venv/bin/python persist_models.py
+cd ..
+.venv/bin/streamlit run dashboard.py
+```
+
+This writes `models/{dataset}_model.joblib` alongside the feature ordering, a
+sample of held-out test instances and the metrics the configuration achieved. The
+model files are excluded from version control because they are large and
+regenerable.
+
+The dashboard has three views: prediction with local SHAP attribution, global
+feature importance, and the comparative results of the study.
+
+**URL input.** For URL-Phish, all 22 features are lexical, so the dashboard
+accepts a URL typed directly. The feature definitions were recovered from the
+published data and are checked against it:
+
+```bash
+cd src
+../.venv/bin/python url_features.py --samples 2000   # verify extraction
+../.venv/bin/python url_features.py --url "http://smbc-card565.club"
+```
+
+All 22 features reproduce the published values exactly, which is what makes URL
+input valid rather than merely plausible. The Vrbancic feature set includes
+domain registration and hosting attributes that cannot be derived from a URL, so
+instances for that dataset are selected from the held-out test set instead.
+
+**A caveat worth knowing.** The model scores real URLs from the dataset
+accurately, but URLs following classic phishing conventions, such as a login path
+on a raw IP address, are often scored as legitimate. The dataset's phishing
+samples are dominated by abuse of free hosting and site-builder services, while
+its legitimate samples are mostly established institutional domains, so the model
+learned that narrower distinction. This is a property of the training data, and
+the dashboard displays a corresponding caution.
+
 ---
 
 ## 4. Project layout
@@ -237,6 +281,7 @@ standardised values the model sees, so they are readable.
 code/
 ├── run_pipeline.py          # end-to-end orchestrator
 ├── requirements.txt
+├── dashboard.py             # Streamlit explainability dashboard
 ├── src/
 │   ├── config.py            # all experimental constants
 │   ├── data_loader.py       # loading + induced imbalance
@@ -247,8 +292,11 @@ code/
 │   ├── experiment.py        # the configuration sweep
 │   ├── analysis.py          # Chapter 5 tables
 │   ├── statistical_tests.py # Friedman, Wilcoxon, McNemar
-│   └── explainability.py    # SHAP
+│   ├── explainability.py    # SHAP
+│   ├── persist_models.py    # trains and saves the model the dashboard serves
+│   └── url_features.py      # URL feature extraction, with verification
 ├── data/                    # cached datasets (downloaded on first run)
+├── models/                  # persisted models for the dashboard
 ├── results/                 # results.csv, tables, test outputs
 └── figures/                 # SHAP plots
 ```

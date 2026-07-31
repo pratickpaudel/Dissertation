@@ -25,8 +25,9 @@ CODE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = CODE_DIR / "data"
 RESULTS_DIR = CODE_DIR / "results"
 FIGURES_DIR = CODE_DIR / "figures"
+MODELS_DIR = CODE_DIR / "models"
 
-for _d in (DATA_DIR, RESULTS_DIR, FIGURES_DIR):
+for _d in (DATA_DIR, RESULTS_DIR, FIGURES_DIR, MODELS_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------------------------

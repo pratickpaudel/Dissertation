@@ -283,22 +283,41 @@ The overall sequence described here is the one set out in the research design an
 
 4.11 Software and Implementation Environment
 
-The implementation is carried out using Python 3.10 and the following core libraries:
+The implementation is carried out using Python 3.11 and the following core libraries:
 
 •	Scikit-learn 1.3.0 for machine learning models, cross-validation and evaluation metrics
 •	Imbalanced-learn 0.11.0 for imbalance treatment techniques including SMOTE, ADASYN, SMOTEENN and SMOTETomek
 •	Pandas 2.0.3 for data loading and manipulation
 •	NumPy 1.24.3 for numerical computation
+•	SciPy 1.10.1 and statsmodels 0.14.0 for the Friedman, Wilcoxon and McNemar significance tests
+•	SHAP 0.42.1 for feature attribution
+•	Streamlit 1.60.0 for the explainability dashboard, with tldextract 5.3.1 for URL parsing and joblib 1.5.3 for model persistence
 
 These versions are specified to support reproducibility, so that future researchers can replicate the experimental environment. The use of widely adopted open-source libraries also strengthens the transparency and credibility of the implementation.
 
-4.12 Design Justification
+4.12 Explainability and Dashboard Implementation
+
+The explainability analysis introduced in Section 3.10 is implemented using SHAP, which decomposes an individual prediction into additive per-feature contributions. Because the two best-performing configurations are both tree ensembles, the exact TreeExplainer algorithm is used rather than the slower model-agnostic approximation. Attributions are computed on data transformed through every pipeline step preceding the classifier, so that the explanation describes the feature space in which the model was actually fitted. Resampling steps are excluded from this transformation because they alter the number of training rows rather than the representation of an individual instance.
+
+Two forms of attribution are produced. Global importance ranks features by their mean absolute contribution across a sample of held-out instances, indicating which features move predictions most overall. Local attribution decomposes a single prediction, showing which feature values pushed the model towards or away from the phishing class. Feature values are reported on their original scale rather than the standardised scale used internally, since a standardised value carries no interpretable meaning for a reader.
+
+The explainability outputs are presented through a dashboard implemented in Streamlit. To keep the interface responsive, the best-performing configuration for each dataset is trained once and persisted to disk with joblib, together with the feature ordering, a sample of held-out test instances and the metrics that configuration achieved. The configuration to persist is read from the experimental results rather than hard-coded, so the dashboard always reflects the study's own conclusion about which configuration performed best. In both cases this is Random Forest combined with SMOTE.
+
+The dashboard is organised into three views. The first accepts an input instance and returns the predicted class, the associated probability and the local SHAP attribution rendered as a signed contribution chart. The second presents global feature importance for the selected dataset, alongside the comparison of feature rankings across imbalance treatment methods. The third presents the comparative results of the study, so that an individual prediction can be interpreted in the context of the aggregate findings.
+
+Input is handled differently for the two datasets, for a substantive reason. The URL-Phish feature set is entirely lexical and structural, so all twenty-two features can be recomputed from a URL string, and the dashboard therefore accepts a URL typed directly by the user. This required the feature definitions to be recovered from the published data, since an extraction that differed from the original would present the model with inputs drawn from a different distribution and render its predictions unreliable. The recovered definitions were validated by extracting features from two thousand URLs drawn at random from the published dataset and comparing them against the stored values; all twenty-two features reproduced the published values exactly. The Vrbancic feature set, by contrast, includes domain registration and hosting attributes that cannot be derived from a URL alone and would require external lookups, so instances for that dataset are selected from the held-out test partition instead.
+
+One limitation of the URL input mode became apparent during testing and is reported here rather than concealed. The model classifies real URLs from the dataset accurately in both classes, but URLs constructed to follow classic phishing conventions, such as a credential-harvesting path hosted on a raw IP address, are frequently scored as legitimate. Inspection of the dataset explains this: its phishing samples are dominated by the abuse of free hosting and site-builder services, while its legitimate samples are largely established institutional domains. The model has therefore learned the distinction that the data presents, which is a narrower one than phishing detection in general. This is a property of the training distribution rather than a defect in the implementation, and the dashboard displays a corresponding caution alongside the URL input. It is discussed further as a limitation in Chapter 6.
+
+The dashboard is a demonstration artefact. It illustrates how the explainability outputs could support interpretation in an operational setting, and it makes the model's reasoning inspectable rather than requiring it to be taken on trust. It is not subjected to a formal usability study, as that would require a participant sample and a validated instrument, which lie beyond the scope of this dissertation.
+
+4.13 Design Justification
 
 The design choices made in this chapter are intended to support fairness, reproducibility and relevance. The use of two datasets makes the findings more robust, because it reduces the risk that the results are specific to a single benchmark. The use of multiple imbalance treatment methods allows the study to compare different balancing philosophies, rather than relying on one preferred approach. The use of three classifiers ensures that the results are not limited to a single model family.Draft-Final-Version.docx
 
 The overall implementation is deliberately structured around controlled experimentation. That is important because the dissertation is not trying to claim that one model solves phishing detection universally. Instead, it is examining how class imbalance treatment affects model behaviour under different experimental conditions. This makes the design academically defensible and closely aligned to the literature on imbalanced phishing detection.Draft-Final-Version.docx
 
-4.13 Chapter Summary
+4.14 Chapter Summary
 
 This chapter has described the design and implementation of the experimental phishing detection system. It explained how the datasets were integrated, how preprocessing was carried out, how imbalance treatment methods were applied, how cross-validation and hyperparameter tuning were configured, how the machine learning models were selected and how performance was evaluated. The implementation is intentionally modular and comparative to ensure that all imbalance treatment techniques are evaluated under identical experimental conditions, thereby supporting fair comparison and reproducible research.scikit-learn+1Draft-Final-Version.docx
 
