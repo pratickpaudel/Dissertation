@@ -31,14 +31,16 @@ The whole procedure can be executed with a single command:
 .venv/bin/python run_pipeline.py
 ```
 
-Runtime is roughly 5 minutes for the full 48-configuration sweep. Useful flags:
+Runtime is roughly 23 minutes for the full 48-condition sweep under a single seed
+(2 datasets x 8 conditions x 3 classifiers), and about 69 minutes for all three seeds.
+Useful flags:
 
 | Flag | Purpose |
 |---|---|
 | `--quick` | Small subset, for checking the setup works |
 | `--skip-experiments` | Re-run only the analysis on existing `results.csv` |
 | `--with-shap` | Also run the SHAP explainability stage |
-| `--ratio 0.05` | Use a different induced imbalance ratio |
+| `--ratio 0.05` | Induce a different imbalance ratio (not used in the study; see below) |
 
 For the statistically stronger version, run the sweep under several seeds
 (see [section 8](#8-repeated-runs-recommended)):
@@ -178,7 +180,7 @@ Subsets can be run with `--datasets`, `--methods`, `--classifiers`, `--ratio`.
 ../.venv/bin/python analysis.py
 ```
 
-Generates the Chapter 5 tables as both `.csv` and `.md` (paste-ready):
+Generates the Chapter 6 tables as both `.csv` and `.md` (paste-ready):
 
 | Output | Content |
 |---|---|
@@ -211,14 +213,14 @@ The McNemar comparisons are chosen to be informative rather than merely
 top-ranked: best vs untreated baseline (did treatment change behaviour?), best
 vs the best of each other classifier, and best vs worst.
 
-### Step 10: SHAP explainability (Section 3.10)
+### Step 10: SHAP explainability
 
 ```bash
 # global + local attributions for one configuration
-../.venv/bin/python explainability.py --dataset uci --method smote --classifier random_forest --plot
+../.venv/bin/python explainability.py --dataset urlphish --method smote --classifier random_forest --plot
 
 # does treatment change which features the model relies on?
-../.venv/bin/python explainability.py --compare --dataset uci --classifier random_forest
+../.venv/bin/python explainability.py --compare --dataset urlphish --classifier random_forest
 ```
 
 `TreeExplainer` is used for Decision Tree and Random Forest (exact and fast).
@@ -238,13 +240,13 @@ code/
 ├── requirements.txt
 ├── src/
 │   ├── config.py            # all experimental constants
-│   ├── data_loader.py       # loading + induced imbalance
+│   ├── data_loader.py       # loading (+ unused induce_imbalance helper)
 │   ├── preprocessing.py     # cleaning + stratified split
 │   ├── imbalance.py         # the seven techniques
 │   ├── models.py            # pipeline, grids, GridSearchCV
 │   ├── evaluation.py        # metrics
 │   ├── experiment.py        # the configuration sweep
-│   ├── analysis.py          # Chapter 5 tables
+│   ├── analysis.py          # Chapter 6 tables
 │   ├── statistical_tests.py # Friedman, Wilcoxon, McNemar
 │   └── explainability.py    # SHAP
 ├── data/                    # cached datasets (downloaded on first run)
@@ -257,7 +259,7 @@ code/
 
 ## 5. Reproducibility
 
-`RANDOM_STATE = 42` is applied to the induced downsampling, the train-test
+`RANDOM_STATE = 42` is applied to the stratified subsampling, the train-test
 split, the cross-validation folds, every sampler, and every classifier. Deleting
 `results/` and re-running `run_pipeline.py` reproduces identical numbers.
 
