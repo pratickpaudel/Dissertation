@@ -295,7 +295,7 @@ The implementation is carried out using Python 3.11 and the following core libra
 
 These versions are specified to support reproducibility, so that future researchers can replicate the experimental environment. The use of widely adopted open-source libraries also strengthens the transparency and credibility of the implementation.
 
-4.12 Explainability and Dashboard Implementation
+4.12 Explainability Implementation
 
 The explainability analysis introduced in Section 3.10 is implemented using SHAP, which decomposes an individual prediction into additive per-feature contributions. Because the two best-performing configurations are both tree ensembles, the exact TreeExplainer algorithm is used rather than the slower model-agnostic approximation. Attributions are computed on data transformed through every pipeline step preceding the classifier, so that the explanation describes the feature space in which the model was actually fitted. Resampling steps are excluded from this transformation because they alter the number of training rows rather than the representation of an individual instance.
 

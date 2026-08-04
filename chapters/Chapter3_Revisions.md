@@ -224,14 +224,28 @@ Source: Author's own work.
 
 ---
 
-## 4. Section 3.10 — Explainability and Dashboard Evaluation
+## 4. Section 3.10 — Explainability Analysis
 
-**Replace the whole section.** The dashboard described here has been implemented,
-so the section can now state what it does rather than what it will do. Two
-problems in the existing text are also corrected: a grammatical error, and a
-claim to evaluate usability that no planned procedure supports.
+**Replace the whole section, and retitle it.**
 
-### 3.10 Explainability and Dashboard Evaluation
+The existing title, "Explainability and Dashboard Evaluation", gives the dashboard
+equal standing with the explainability analysis and implies that it forms part of
+the evaluation strategy. The two are not equivalent. The SHAP analysis bears
+directly on the research question, because it tests whether imbalance treatment
+changes which features a model relies upon. The dashboard is only the means by
+which those outputs are surfaced. Retitling to "Explainability Analysis" makes
+that hierarchy explicit and keeps the dashboard as supporting detail.
+
+This matters for alignment. The dashboard does not appear among the objectives in
+Chapter 1, and it should not be added to them: doing so would elevate a
+demonstration artefact to a research aim and invite the question of what research
+value it delivers. Its correct position is documented in the methodology and the
+implementation, but not claimed as a contribution.
+
+Two further problems in the existing text are corrected below: a grammatical
+error, and a claim to evaluate usability that no planned procedure supports.
+
+### 3.10 Explainability Analysis
 
 Alongside the quantitative comparison, the best-performing models are examined
 using explainable artificial intelligence techniques. SHAP (SHapley Additive
@@ -254,11 +268,12 @@ produced it, and allows those contributions to be read in the context of the
 aggregate findings of the study. Its purpose is to make the model's reasoning
 inspectable rather than requiring it to be accepted on trust.
 
-The dashboard is a demonstration artefact. It illustrates how the explainability
-outputs could support interpretation in an operational setting, but it is not
-subjected to a formal usability study, since that would require a participant
-sample and a validated instrument and lies beyond the scope of this dissertation.
-The implementation is described in Section 4.12.
+The dashboard is a supporting artefact rather than a component of the evaluation.
+It illustrates how the explainability outputs could support interpretation in an
+operational setting, but it is not subjected to a formal usability study, since
+that would require a participant sample and a validated instrument and lies beyond
+the scope of this dissertation. No claim about the system's usability is therefore
+made. The implementation is described in Section 4.12.
 
 ### Note on the original wording
 
