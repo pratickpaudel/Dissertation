@@ -1,22 +1,24 @@
 # Chapter 7 — Conclusions and Recommendations
 
-Paste-ready, with one important caveat. **Section 7.3 answers the aim as I have had to
-reconstruct it, because the aim in your interim report still names the two datasets you
-excluded.** Read the note at the end of this file before pasting Section 7.3. Everything
-else is safe to use as written.
+Paste-ready. Now written against the research question, aim and six objectives as recorded
+in your signed project specification (B01829081, submitted 24/06/2026), rather than against
+a reconstruction. Section 7.3 addresses each objective in turn, which is what a marker
+looks for.
 
 Limitations are cross-referenced to Chapter 8 rather than restated, so they appear in one
-marked place only.
+marked place only. See the notes at the end for the one objective the study deviated from
+and how I have handled it.
 
 ---
 
 ## 7.1 Introduction
 
-This chapter draws the study to a conclusion. It summarises the principal findings, states
-the answer they provide to the research question, sets out the contributions the study
-makes, and offers recommendations both for practitioners deploying phishing detection
-systems and for subsequent research. The limitations bounding these conclusions are set out
-in Section 8.6 and are referenced rather than repeated here.
+This chapter draws the study to a conclusion. It summarises the principal findings, assesses
+the extent to which each research objective was achieved, states the answer the evidence
+provides to the research question, sets out the contributions the study makes, and offers
+recommendations both for practitioners deploying phishing detection systems and for
+subsequent research. The limitations bounding these conclusions are set out in Section 8.6
+and are referenced rather than repeated here.
 
 ---
 
@@ -69,12 +71,86 @@ hundreds of test instances, whereas treatment changed tens and never significant
 
 ---
 
-## 7.3 Answer to the Research Question
+## 7.3 Achievement of the Research Objectives
 
-The study set out to investigate the impact of class imbalance treatment techniques on the
-performance of machine learning models for phishing website detection, comparing the
-effectiveness of different balancing strategies across differing feature representations.
-The evidence supports a four-part answer.
+Six objectives were set in the project specification. Table 7.1 records where each is
+addressed and the extent to which it was met, and the discussion that follows examines the
+two that require qualification.
+
+**Table 7.1 Achievement of the research objectives**
+
+| # | Objective | Addressed in | Outcome |
+|---|---|---|---|
+| 1 | Conduct a structured literature review on phishing detection, class imbalance and imbalance-aware evaluation | Chapter 2 | Achieved |
+| 2 | Identify and analyse imbalance treatment techniques such as no resampling, SMOTE, undersampling and class weighting | Chapters 2 and 4 | Achieved and extended |
+| 3 | Acquire and preprocess the specified datasets | Chapters 3 and 4 | Achieved with substituted datasets |
+| 4 | Train selected classifiers using the same preprocessing pipeline across both datasets and all treatment techniques | Chapter 4, verified in Chapter 5 | Achieved |
+| 5 | Evaluate model performance under different treatment techniques using appropriate metrics | Chapter 6 | Achieved and extended |
+| 6 | Analyse which treatment approach performs best and discuss the implications | Chapter 6, Sections 6.4 to 6.10 | Achieved with a qualified answer |
+
+**Objective 1** was met in Chapter 2, which reviews phishing detection, the class imbalance
+problem, the four families of treatment technique, and the evaluation practices appropriate
+to skewed data. Section 2.7 identified the research gap the study addresses.
+
+**Objective 2** was met and extended. The specification named four conditions as examples:
+no resampling, SMOTE, undersampling and class weighting. The study implemented all four and
+added three more, giving random oversampling, random undersampling, SMOTE, ADASYN, SMOTEENN,
+SMOTETomek and cost-sensitive learning, together with the untreated baseline. This covers
+all four families identified in Chapter 2 rather than a sample of them, and it is what
+allows Section 6.4 to establish that techniques order themselves by how aggressively they
+alter the training distribution, a pattern that would not have been visible with four
+conditions.
+
+**Objective 3 was achieved in modified form and represents the study's one deviation from
+its specification.** The specification named the UCI Phishing Websites dataset and the
+Hannousse and Yahiouche 87-feature benchmark. Both were subsequently found to be
+approximately class-balanced, at 44.31% and 50.00% minority share, which makes them unable
+to support a study of class imbalance treatment: there would have been no imbalance to
+treat. They were replaced with two naturally imbalanced datasets, the Vrbančič phishing
+dataset at 1:1.89 and URL-Phish at 1:6.02. Section 3.4 documents both the exclusion and the
+replacement, and Section 8.2.1 examines how the error arose and what it indicates about the
+order in which design decisions should be taken.
+
+The substitution preserved the substance of the objective. The specification's concern was
+to compare balancing strategies "under various feature settings", and the replacement
+datasets differ in feature representation more sharply than the originals did, at 92
+engineered website features against 22 lexical URL features. What changed is that the
+comparison is now conducted at genuine operational prevalence rather than on data where the
+phenomenon under investigation is absent.
+
+**Objective 4** was met and independently verified. A single preprocessing pipeline was
+applied to both datasets and all eight conditions, and Chapter 5 confirms rather than
+assumes this: stratification held across all 144 runs at 34.57% and 14.23% in training
+against 34.58% and 14.22% in testing, partitions were exactly 16,000 and 4,000 throughout,
+treatment was confirmed to be applied only to the training partition, and no condition was
+found to combine resampling with class weighting.
+
+**Objective 5** was met and extended. The specification called for appropriate evaluation
+metrics; six were reported, comprising precision, recall, F1, ROC-AUC, PR-AUC and MCC, all
+computed with respect to the phishing class as Chapter 2 recommends. The study went beyond
+the objective by adding formal statistical testing that the specification did not require:
+Friedman tests, post-hoc Wilcoxon signed-rank comparisons with Holm-Bonferroni correction,
+and McNemar's test on paired predictions. Section 6.6.2 shows why this mattered, since it is
+what establishes that SMOTE and SMOTETomek cannot be distinguished from one another and that
+the difference between them should not be reported as a result.
+
+**Objective 6 was met, but the answer it produced is qualified rather than
+straightforward.** The objective asks which treatment approach performs best. Section 6.4
+establishes that among the seven techniques SMOTETomek and SMOTE are jointly best and cannot
+be separated, while random undersampling is reliably worst. But it also establishes that
+none of them outperforms applying no treatment at all, which is a finding the objective did
+not anticipate and which required the additional analysis in Sections 6.8 to 6.10 to
+interpret. The implications the objective calls for are therefore discussed at greater
+length than planned, across the mechanism in Section 6.8, the cost analysis in Section 6.9,
+and the reconciliation with prior work in Section 6.10.
+
+---
+
+## 7.4 Answer to the Research Question
+
+The research question asked: *how do different class imbalance treatment techniques affect
+the performance of machine learning models for phishing website detection?* The evidence
+supports a four-part answer.
 
 **Imbalance treatment has a substantial and systematic effect on performance, but that
 effect is a redistribution rather than an improvement.** Every technique increased recall
@@ -118,7 +194,7 @@ best but whether that exchange is worth making in a given deployment.
 
 ---
 
-## 7.4 Contributions
+## 7.5 Contributions
 
 The study makes four contributions.
 
@@ -155,7 +231,7 @@ which is a tractable question in a way that interpreting a 0.006 difference in F
 
 ---
 
-## 7.5 Recommendations for Practice
+## 7.6 Recommendations for Practice
 
 Six recommendations follow for practitioners building phishing detection systems on
 imbalanced data.
@@ -199,20 +275,20 @@ prevalence.
 
 ---
 
-## 7.6 Limitations
+## 7.7 Limitations
 
 The conclusions above are bounded by the limitations set out in Section 8.6, which should be
 read alongside them. The most consequential is recorded in Section 8.6.1: having established
 that imbalance treatment operates by displacing the decision threshold, the study did not
 test threshold adjustment directly, since all models classified at the default threshold of
 0.5. The study therefore cannot establish whether the seven techniques achieve anything that
-a single tuned threshold would not, and the recommendations in Section 7.5 should be read as
+a single tuned threshold would not, and the recommendations in Section 7.6 should be read as
 comparisons among treatment techniques rather than as a claim that treatment is the best
 available means of shifting a model's operating point.
 
 ---
 
-## 7.7 Recommendations for Future Work
+## 7.8 Recommendations for Future Work
 
 Six directions follow, in order of priority.
 
@@ -259,7 +335,7 @@ convert the break-even analysis from a conditional statement into a definite rec
 
 ---
 
-## 7.8 Final Remarks
+## 7.9 Final Remarks
 
 This study set out to determine which class imbalance treatment technique performs best for
 phishing website detection, and found that on naturally imbalanced data none of them
@@ -282,74 +358,94 @@ does not, the comparison is the only thing that will reveal it.
 
 # Notes on this chapter
 
-## Read this before pasting Section 7.3
+## What changed now that I have your specification
 
-**Your aim statement still names the datasets you excluded.** In the interim report the aim
-reads, in part: *"we will use the UCI Phishing Websites dataset and the Hannousse and
-Yahiouche 87-feature benchmark dataset to compare the effectiveness of different class
-balancing strategies under various feature settings."*
+Two things, and the first is good news.
 
-Your Chapter 3 has been corrected — Section 3.4.1 is now "Datasets Considered and Excluded"
-and correctly rejects both. But two places still commit to them:
+**Your research question is dataset-neutral.** It reads: *"How do different class imbalance
+treatment techniques affect the performance of machine learning models for phishing website
+detection?"* No dataset is named. Section 7.4 therefore answers it exactly as posed, with no
+adjustment required. The dataset substitution does not touch your research question at all.
 
-1. **The aim statement in the introduction**, quoted above
-2. **The Research Variables table**, where the controlled variable "Dataset" is given as
-   "UCI Phishing Websites dataset and Hannousse and Yahiouche benchmark dataset"
+**"No resampling" was in Objective 2 from the start.** Your specification lists the
+techniques to be analysed as "no resampling, SMOTE, under sampling, and class weighting".
+The untreated baseline was therefore part of your plan, not something added later. This
+matters, and I have corrected Section 8.2.3 of the Critical Self Evaluation, which
+previously said you included it for reasons of symmetry rather than insight. The accurate
+account is that it was specified from the outset, but listed as one technique among four
+examples rather than recognised as the control that makes the others interpretable. That is
+still a fair self-criticism and it is now supported by the document.
 
-This matters more than the other outstanding interim-report items you asked me to leave
-alone, because Chapter 7 answers the aim. If Chapter 1 states an aim naming UCI and
-Hannousse and Chapter 7 reports results from Vrbančič and URL-Phish, an examiner reading the
-two together sees a study that did not do what it said it would. That is the kind of
-inconsistency that is noticed immediately and is trivial to fix.
+## The deviation, and why I have put it in the open
 
-I have written Section 7.3 against the aim with the dataset clause removed and the phrase
-"across differing feature representations" retained, since that part still holds: your two
-datasets genuinely do differ in representation, at 92 engineered features against 22 lexical
-URL features. Suggested replacement for the aim:
+Objective 3 names the UCI Phishing Websites dataset and the Hannousse and Yahiouche
+benchmark. Your specification is a signed, submitted form dated 24/06/2026, so it cannot be
+retrospectively amended, and the dissertation must therefore acknowledge that it did not do
+what the specification said.
+
+I have handled this in three places rather than hiding it:
+
+- **Section 7.3** states plainly that Objective 3 is the study's one deviation, gives the
+  reason (both datasets are approximately balanced, at 44.31% and 50.00% minority share, so
+  there was no imbalance to treat), and argues that the substitution preserved the
+  objective's substance, since the specification asked for comparison "under various feature
+  settings" and the replacements differ more sharply in representation than the originals
+- **Section 3.4** documents the exclusion and replacement
+- **Section 8.2.1** examines how the error arose
+
+This is the right way round. A deviation that is declared, justified and reflected upon
+reads as research judgement. The same deviation left implicit reads as carelessness, and a
+marker comparing your specification against your dissertation will notice either way.
+
+## Chapter 1 still needs fixing
+
+The aim sentence in your interim report reproduces the specification's wording, including
+both excluded datasets, and so does your Research Variables table. The specification is
+fixed, but Chapter 1 is not. Suggested aim:
 
 > The overall aim of this project is to investigate the impact of class imbalance treatment
 > techniques on the performance of machine learning models for phishing website detection.
 > Specifically, this study uses two naturally imbalanced datasets — the Vrbančič phishing
 > dataset and URL-Phish — to compare the effectiveness of different class balancing
-> strategies across differing feature representations and degrees of class imbalance.
+> strategies across differing feature representations and degrees of class imbalance. The
+> datasets originally specified were found to be approximately class-balanced and were
+> substituted for this reason, as set out in Section 3.4.
 
-Update the Research Variables table row to match.
+The final sentence is worth including. It turns a discrepancy an examiner might find into
+one you have already declared.
 
-## No numbered objectives found
+Update the Research Variables table row for "Dataset" to match, and restate Objective 3 in
+Chapter 1 as acquisition and preprocessing of the two datasets actually used.
 
-A conclusions chapter conventionally answers the aim and then each numbered objective in
-turn. I could not find a list of numbered objectives in the interim report, so Section 7.3
-answers the aim and research question directly. If your final Chapter 1 does contain
-numbered objectives, tell me what they are and I will restructure 7.3 to address each
-explicitly, which reads more strongly and is easier for a marker to award against.
+## Two objectives you exceeded — say so
 
-## How the marking scheme is served
+Markers award against objectives, so do not undersell these:
 
-Your criterion is "Conclusions **and Recommendations**", so recommendations carry real
-weight. I have therefore given them two sections rather than one:
+- **Objective 2** asked for four conditions by name; you implemented **eight**, covering all
+  four families from Chapter 2 rather than a sample
+- **Objective 5** asked for appropriate metrics; you reported **six** and added statistical
+  testing the specification never required — Friedman, post-hoc Wilcoxon with Holm
+  correction, and McNemar
 
-- **7.5 Recommendations for Practice** — the practical implications that would have sat in
-  the Discussion chapter, aimed at practitioners
-- **7.7 Recommendations for Future Work** — aimed at researchers
+Section 7.3 records both as "achieved and extended" for this reason.
 
-Section 7.6 is deliberately short and points to Section 8.6. Do not expand it; limitations
-are marked under Critical Self Evaluation, and repeating them here costs you under Structure
-and Style without gaining anything.
+## Structure of this chapter
 
-## Also done in this change
+Your criterion is "Conclusions **and Recommendations**", so recommendations get two sections:
+7.6 for practitioners and 7.8 for researchers. Section 7.7 is deliberately three sentences
+pointing at Section 8.6 — do not expand it, since limitations are marked under Critical Self
+Evaluation and repeating them here costs you under Structure and Style for no gain.
 
-The SHAP figure files have been renamed from `Figure_5_7_SHAP_Summary_URLPhish.*` to
-`Figure_6_1_SHAP_Summary_URLPhish.*`, matching the caption in Section 6.7.1.
+Sections renumbered from the previous draft: Answer to the Research Question is now 7.4,
+Contributions 7.5, Recommendations for Practice 7.6, Limitations 7.7, Future Work 7.8, Final
+Remarks 7.9. Table 7.1 is new.
 
-## Chapter status after this
+## One thing worth checking
 
-| Ch | Title | Weight | Status |
-|---|---|---|---|
-| 1 | Introduction | 5% | Yours — **fix the aim** |
-| 2 | Literature Review | 15% | Yours |
-| 3 | Research Design and Methodology | 10% | Revised, one duplicate 3.10 outstanding |
-| 4 | Design and Implementation | 20% | Complete |
-| 5 | Testing | 10% | Complete |
-| 6 | Results and Analysis | 10% | Complete |
-| 7 | Conclusions and Recommendations | 10% | This chapter |
-| 8 | Critical Self Evaluation | 10% | Complete |
+Your specification's indicative reading list contains seven sources, of which
+**Hannousse and Yahiouche (2021)** and **Sutter et al. (2022)** and **Ul Hassan et al.
+(2022)** appear in your literature review. The other four — Kocyigit et al. (2024), Mousa et
+al. (2025), Salah et al. (2024) and Tan Kian Hua and Macgregor (2022) — do not appear to be
+cited anywhere in the interim report. That is not a problem in itself, since an indicative
+list is not binding, but if your supervisor expects to see them engaged with, Chapter 2 is
+where that belongs. Tell me if you want them worked in.

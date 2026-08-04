@@ -33,10 +33,11 @@ limitations of the completed study and a statement of what I would change.
 
 ### 8.2.1 Selecting datasets that could not answer the research question
 
-My initial design used two widely cited phishing datasets. Both are well established in
-the literature, both are used by studies I had reviewed, and I selected them for exactly
-that reason: they offered comparability with prior work. What I failed to consider was
-that both are approximately class-balanced.
+My project specification committed the study to two widely cited phishing datasets, named
+in both the aim and the third objective. Both are well established in the literature, both
+are used by studies I had reviewed, and I selected them for exactly that reason: they
+offered comparability with prior work. What I failed to consider was that both are
+approximately class-balanced, at 44.31% and 50.00% minority share.
 
 This was not a minor mismatch. My research question concerns how imbalance treatment
 techniques affect classification performance. A balanced dataset contains no imbalance to
@@ -101,30 +102,42 @@ to accept that this was still the correct trade.
 
 ### 8.2.3 Including an untreated baseline
 
-The decision that most shaped the study's outcome was including an untreated baseline as a
-condition in its own right, giving eight conditions per classifier per dataset rather than
-seven.
+The decision that most shaped the study's outcome was treating the untreated condition as
+an experimental condition in its own right, giving eight conditions per classifier per
+dataset rather than seven.
 
-I would like to claim this as a piece of methodological insight. It was closer to
-symmetry: it seemed obviously incomplete to compare seven treatments without measuring
-what happened with none. Only after the results arrived did I appreciate that the baseline
-carried the study's central finding. Every treatment technique reduced mean F1 relative to
-it, and McNemar's test found no significant difference between the best treated
+The condition itself was specified from the outset. My project specification lists the
+techniques to be analysed as "no resampling, SMOTE, under sampling, and class weighting",
+so an untreated condition was part of the plan before any code was written. What I did not
+appreciate was its status. I listed it as one technique among four illustrative examples,
+as though not resampling were simply another option alongside SMOTE, rather than
+recognising it as the control against which the others only become interpretable. The
+distinction is not terminological. A study comparing seven treatments answers the question
+of which treatment is best; a study comparing seven treatments against a control also
+answers whether treating is better than not treating, and those are different questions
+with, in this case, opposite answers.
+
+The consequence was that the baseline carried the study's central finding while I regarded
+it as a reference point of secondary interest. Every treatment technique reduced mean F1
+relative to it, and McNemar's test found no significant difference between the best treated
 configuration and the baseline in any of six replications.
 
-What makes this worth reflecting on is what the literature does with this comparison.
+What makes this worth reflecting on is what the literature does with the same comparison.
 Reviewing the studies in Chapter 2 after obtaining my results, I found that most compare
 treatment techniques against one another and report which performed best, without
 establishing whether any outperformed leaving the data alone. Their conclusions are not
 wrong, but they are narrower than they appear: they identify the best treatment, not
-whether treating is better than not treating. My study can address the second question
-only because of a decision I made for reasons of tidiness rather than insight.
+whether treating is better than not treating. My study can address the second question, and
+I can now articulate why that matters, but I could not have done so at the point when I
+specified the condition that made it possible.
 
 I take two things from this. The first is that a control condition is worth including even
-when its result seems predictable, because the cost is one additional condition and the
-value is the interpretability of everything else. The second is more uncomfortable: I made
-the most consequential design decision in the study without understanding why it mattered.
-That it happened to be right does not mean my reasoning was adequate.
+where its result seems predictable, because the cost is one additional condition per
+classifier and dataset while the value is the interpretability of every other comparison in
+the study. The second is more uncomfortable: the most consequential methodological feature
+of my design was present because it seemed natural to include, not because I had reasoned
+about what it would let me conclude. Understanding why a design choice matters after the
+results arrive is not the same as having designed for it.
 
 ---
 
@@ -424,9 +437,9 @@ every figure is drawn from the results or from the verification in Chapter 5:
 
 | Episode | Evidence |
 |---|---|
-| Dataset selection error | Supervisor feedback; datasets replaced mid-project |
+| Dataset selection error | Named in the aim and Objective 3 of the signed specification; replaced mid-project after supervisor feedback |
 | Induced imbalance rejected | Design decision recorded before implementation |
-| Untreated baseline | 8 conditions rather than 7; carries the central finding |
+| Untreated baseline | Specified in Objective 2 as "no resampling"; 8 conditions rather than 7; carries the central finding |
 | Subsample 20,000 | Ratios preserved to 0.01pp, verified in Section 5.3 |
 | Single seed insufficient | 0 of 21 post-hoc pairs significant, rising to 8 of 21 with three seeds |
 | Three silent defects | Section 5.8 |
