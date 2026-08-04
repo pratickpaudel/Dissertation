@@ -223,67 +223,48 @@ effects, so that conclusions remain appropriately qualified.
 Source: Author's own work.
 
 ---
-
 ## 4. Section 3.10 — Explainability Analysis
 
 **Replace the whole section, and retitle it.**
 
-The existing title, "Explainability and Dashboard Evaluation", gives the dashboard
-equal standing with the explainability analysis and implies that it forms part of
-the evaluation strategy. The two are not equivalent. The SHAP analysis bears
-directly on the research question, because it tests whether imbalance treatment
-changes which features a model relies upon. The dashboard is only the means by
-which those outputs are surfaced. Retitling to "Explainability Analysis" makes
-that hierarchy explicit and keeps the dashboard as supporting detail.
+The section is reduced to the explainability analysis alone. Every reference to a
+dashboard is removed, since no interactive interface forms part of the submitted
+work. The title changes from "Explainability and Dashboard Evaluation" to
+"Explainability Analysis" to match.
 
-This matters for alignment. The dashboard does not appear among the objectives in
-Chapter 1, and it should not be added to them: doing so would elevate a
-demonstration artefact to a research aim and invite the question of what research
-value it delivers. Its correct position is documented in the methodology and the
-implementation, but not claimed as a contribution.
-
-Two further problems in the existing text are corrected below: a grammatical
-error, and a claim to evaluate usability that no planned procedure supports.
+This keeps the section aligned with the objectives in Chapter 1, which do not
+mention a dashboard, and it removes the claim to evaluate usability that no
+planned procedure supported. What remains is the part that bears on the research
+question: whether imbalance treatment changes which features a model relies upon.
 
 ### 3.10 Explainability Analysis
 
 Alongside the quantitative comparison, the best-performing models are examined
 using explainable artificial intelligence techniques. SHAP (SHapley Additive
-exPlanations) is used to determine the global and local contributions of
-individual features to model predictions. This makes it possible to explain why a
-given website is classified as phishing or legitimate, and to compare how feature
-importance shifts across classifiers and imbalance treatment methods.
+exPlanations) is used to determine the contribution of individual features to
+model predictions. SHAP is selected because it attributes a prediction additively
+across features, so the contributions sum to the difference between that
+prediction and the average prediction, which makes the resulting explanation
+internally consistent rather than merely indicative.
 
-The comparison of attributions across treatment methods is of particular
-relevance to the research question. If applying a resampling technique changes
-which features a model relies upon, then imbalance treatment affects not only
-predictive performance but also the evidential basis of the decision. Establishing
-whether this occurs is therefore part of characterising what these techniques do.
+Attributions are computed in two forms. Global importance ranks features by their
+mean absolute contribution across a sample of held-out instances, showing which
+features move predictions most overall. Local attribution decomposes a single
+prediction, showing which feature values pushed the model towards or away from
+the phishing class. Because the two best-performing configurations are tree
+ensembles, the exact TreeExplainer algorithm is used rather than a model-agnostic
+approximation.
 
-The SHAP outputs are presented through a dashboard implemented in Streamlit,
-which serves as an operational interface for inspecting predictions and feature
-attributions alongside the summary performance results. The dashboard allows an
-individual prediction to be decomposed into the feature contributions that
-produced it, and allows those contributions to be read in the context of the
-aggregate findings of the study. Its purpose is to make the model's reasoning
-inspectable rather than requiring it to be accepted on trust.
-
-The dashboard is a supporting artefact rather than a component of the evaluation.
-It illustrates how the explainability outputs could support interpretation in an
-operational setting, but it is not subjected to a formal usability study, since
-that would require a participant sample and a validated instrument and lies beyond
-the scope of this dissertation. No claim about the system's usability is therefore
-made. The implementation is described in Section 4.12.
-
-### Note on the original wording
-
-The phrase "a practical evaluation layer for interpretability and usability"
-should not be retained. It commits the study to a usability evaluation, which
-invites the question of participants, tasks and instrument. Presenting the
-dashboard as a demonstration artefact, as above, describes what was actually done
-and removes that exposure.
-
----
+The analysis serves a specific purpose within this study rather than being
+presented for its own sake. By computing attributions separately for models
+trained under different imbalance treatment techniques, it becomes possible to
+establish whether those techniques alter the evidential basis of the decision or
+only the position of the decision boundary. If the ranking of features is stable
+across treatments, then the techniques change how readily a model commits to the
+minority class without changing what it treats as evidence. Establishing which of
+these holds is part of characterising what imbalance treatment actually does, and
+therefore contributes directly to the research question. The results of this
+analysis are reported in Chapter 5.
 
 ## 5. Two errors found while reading the chapter
 
