@@ -5,20 +5,26 @@ in your signed project specification (B01829081, submitted 24/06/2026), rather t
 a reconstruction. Section 7.3 addresses each objective in turn, which is what a marker
 looks for.
 
-Limitations are cross-referenced to Chapter 8 rather than restated, so they appear in one
-marked place only. See the notes at the end for the one objective the study deviated from
-and how I have handled it.
+Section 7.7 states the three limitations that most directly constrain these conclusions and
+is self-contained; Section 8.6 develops the full set. See the notes at the end for the one
+objective the study deviated from, how I have handled it, and a two-sentence answer for the
+viva.
 
 ---
 
 ## 7.1 Introduction
 
-This chapter draws the study to a conclusion. It summarises the principal findings, assesses
-the extent to which each research objective was achieved, states the answer the evidence
-provides to the research question, sets out the contributions the study makes, and offers
-recommendations both for practitioners deploying phishing detection systems and for
-subsequent research. The limitations bounding these conclusions are set out in Section 8.6
-and are referenced rather than repeated here.
+This chapter presents the conclusions of the study. It summarises the principal findings,
+assesses the extent to which each research objective was achieved, states the answer the
+evidence provides to the research question, sets out the contributions the study makes, and
+offers recommendations both for practitioners deploying phishing detection systems and for
+subsequent research.
+
+This is the penultimate chapter. Chapter 8 follows, presenting a critical evaluation of the
+conduct of the project: the design decisions taken and revised, the defects identified during
+verification, and the full set of limitations bounding the study. Section 7.7 below states
+the limitations most directly constraining the conclusions drawn here, and Section 8.6
+develops them at greater length rather than repeating them.
 
 ---
 
@@ -213,8 +219,9 @@ being accounted for. El Aassal et al. (2020) report that phishing detection gain
 as class skew becomes more realistic; the mechanism identified here supplies a reason, since
 treatment helps in proportion to how far the untreated model sits from the prevalence-matched
 operating point, and that distance narrows as prevalence rises. The finding is corroborated
-independently by the invariance of SHAP feature rankings and by the McNemar agreement between
-treated and untreated predictions.
+independently by two results obtained for other purposes: the invariance of SHAP feature
+rankings across treatment techniques, reported in Section 6.7.2, and the agreement between
+treated and untreated predictions under McNemar's test, reported in Section 6.6.3.
 
 **A methodological contribution.** The study demonstrates that a comparative evaluation of
 imbalance techniques without an untreated control cannot support the conclusion that
@@ -277,14 +284,40 @@ prevalence.
 
 ## 7.7 Limitations
 
-The conclusions above are bounded by the limitations set out in Section 8.6, which should be
-read alongside them. The most consequential is recorded in Section 8.6.1: having established
-that imbalance treatment operates by displacing the decision threshold, the study did not
-test threshold adjustment directly, since all models classified at the default threshold of
-0.5. The study therefore cannot establish whether the seven techniques achieve anything that
-a single tuned threshold would not, and the recommendations in Section 7.6 should be read as
-comparisons among treatment techniques rather than as a claim that treatment is the best
-available means of shifting a model's operating point.
+Three limitations bound the conclusions drawn above and should be read alongside them.
+
+**Threshold adjustment was not tested.** This is the most consequential limitation, and it
+follows from the study's own central finding. Having established in Section 6.8 that
+imbalance treatment operates by displacing the model's operating point relative to the true
+prevalence of the minority class, the study did not test the most direct means of achieving
+the same displacement: adjusting the decision threshold on an untreated model. All 144 runs
+classified at the default threshold of 0.5. The study therefore cannot establish whether the
+seven techniques achieve anything that a single tuned threshold parameter would not, and the
+recommendations in Section 7.6 should be read as comparisons among treatment techniques
+rather than as a claim that treatment is the best available means of shifting a model's
+operating point. This is the first item of future work in Section 7.8.
+
+**Only two prevalence levels were examined.** The study establishes that the magnitude of
+treatment effects depends on the severity of imbalance, at 1:1.89 and 1:6.02, but two points
+cannot locate the prevalence at which treatment begins to be beneficial or characterise the
+shape of that relationship. The conclusion that treatment does not improve classification is
+therefore properly conditional on these degrees of imbalance rather than general, and the
+mechanism in Section 6.8 predicts that it would not hold at sufficiently extreme skew. A
+related consequence of the dataset substitution recorded in Section 7.3 is that the study
+cannot be compared directly against the body of prior work conducted on the two benchmarks
+originally specified, since it does not use them.
+
+**Results derive from a fixed 20,000-instance sample.** Both datasets were reduced by
+stratified subsampling from 88,647 and 116,600 instances, preserving class ratios to within
+0.01 percentage points, because Support Vector Machine training scales roughly quadratically
+and the full matrix was repeated across three seeds. Every condition is affected equally, so
+the comparisons between them are unaffected, but absolute performance would likely be
+somewhat higher at full scale and the reported figures should be read as a comparison rather
+than as an estimate of achievable performance.
+
+The remaining limitations, including the restriction to three classifier families, the
+application of the explainability analysis to Random Forest alone, and the constraint that
+McNemar's test can only be applied within a single replication, are set out in Section 8.6.
 
 ---
 
@@ -449,3 +482,123 @@ al. (2025), Salah et al. (2024) and Tan Kian Hua and Macgregor (2022) — do not
 cited anywhere in the interim report. That is not a problem in itself, since an indicative
 list is not binding, but if your supervisor expects to see them engaged with, Chapter 2 is
 where that belongs. Tell me if you want them worked in.
+
+
+---
+
+# Response to the review feedback
+
+Four issues were raised. Three are fixed in this draft; the fourth is narrower than reported
+and I have verified it rather than acted on it.
+
+## Issue 1 — chapter numbering: the references are correct, the framing was not
+
+The reviewer is right that something was wrong, but the diagnosis needs correcting in one
+respect: **Chapter 8 does exist.** It is `Chapter8_Critical_Self_Evaluation.md`, it is
+already written, and it is not optional — your marking scheme awards Critical Self Evaluation
+10%, separately from Conclusions and Recommendations at 10%. The references to Sections 8.6
+and 8.2.1 therefore point at real sections.
+
+So do **not** take the reviewer's first option of redirecting those cross-references into
+Chapter 7. That would mean either duplicating Chapter 8's content, which costs you under
+Structure and Style, or moving limitations out of the chapter where they are marked.
+
+The real fault was that Chapter 7 opened with "This chapter draws the study to a conclusion"
+and then forward-referenced a chapter the reader had no reason to expect. Section 7.1 now
+states plainly that this is the penultimate chapter and what Chapter 8 contains. The reviewer
+was reading Chapter 7 in isolation, which is exactly how a marker will encounter it, so the
+signal needed to be in the text.
+
+## Issue 2 — Section 7.7 expanded
+
+Agreed, and done. It now names three limitations substantively — threshold adjustment not
+tested, only two prevalence levels, and the fixed 20,000-instance sample — with the pointer
+to Section 8.6 as a supplement rather than a substitute. The threshold limitation is
+foregrounded, as recommended, and I have added the observation that the dataset substitution
+also costs direct comparability with prior work conducted on the two original benchmarks,
+which is a real consequence and better stated here than left for an examiner to raise.
+
+## Issue 3 — verified, and substantially narrower than reported
+
+I checked every occurrence rather than assuming. The counts:
+
+| Document | `UCI` | `Hannousse` | `Vrbančič` | `URL-Phish` |
+|---|---|---|---|---|
+| Design and Implementation Draft V1.docx (Ch 4) | **0** | **0** | 8 | 9 |
+| Interim Report.docx (Ch 2–3) | 4 | 7 | 5 | 5 |
+
+**Chapter 4 is already clean.** No action needed there.
+
+**The literature review does not frame Hannousse and Yahiouche as your benchmark.** Of the
+seven occurrences in the interim report, four are legitimate and should be left alone:
+
+- Two are ordinary scholarly citations, supporting claims about generalisation, robustness and
+  calibration, and about why phishing detection is difficult. They cite the paper as a source,
+  not as your data.
+- One is Section 3.4's account of the datasets considered and excluded, which correctly
+  documents both with their figures — 11,055 instances at 44.31% phishing, and 11,430 URLs
+  balanced by design at exactly 50%. This is the passage that makes your substitution
+  defensible and it should stay.
+- One is the reference list entry.
+
+**Three occurrences do need fixing**, and two you already know about:
+
+1. **The aim statement**, which still says "we will use the UCI Phishing Websites dataset and
+   the Hannousse and Yahiouche 87-feature benchmark dataset"
+2. **The Research Variables table**, where the controlled variable "Dataset" gives both
+3. **The table of contents**, which still lists "3.4.1 UCI Phishing Websites Dataset" and
+   "3.4.2 Hannousse and Yahiouche Benchmark Dataset"
+
+The third is worth knowing about because it looks worse than it is. Those are unrefreshed
+`PAGEREF` fields, not text you need to rewrite: right-click the table of contents in Word and
+choose Update Field, and they will regenerate from your current headings. But a marker sees
+the contents page before anything else, so leaving it stale would advertise the problem on
+page one.
+
+So the scope of Issue 3 is: fix the aim, fix one table row, refresh the contents page. Not a
+rewrite of Chapters 2 and 3.
+
+## Issue 4 — forward reference added
+
+The SHAP sentence in Section 7.5 now reads "reported in Section 6.7.2", and I have given the
+McNemar corroboration the same treatment with "reported in Section 6.6.3", since it had the
+same problem and the reviewer would have caught it next.
+
+## The two-sentence viva answer
+
+The reviewer is right that you should be able to deliver this without the text. Two versions;
+use whichever sits better in your mouth.
+
+> The datasets named in my specification turned out to be approximately balanced — 44%
+> and exactly 50% phishing — so there was no class imbalance for the treatment techniques to
+> act on, and any differences I measured would have reflected the noise those techniques
+> introduced rather than any corrective effect. I replaced them with two naturally imbalanced
+> datasets at 1:1.89 and 1:6.02, which meant accepting only two prevalence levels instead of
+> a controlled series, but it meant the study measured the phenomenon it claimed to measure.
+
+Or, more compactly:
+
+> I had selected those datasets because they were well established in the literature, not
+> because their properties fitted my research question, and they were close to balanced — so
+> a study of imbalance treatment would have had no imbalance to treat. Substituting naturally
+> imbalanced data cost me experimental control but it was the difference between measuring
+> the effect and measuring an artefact.
+
+Two things to hold in reserve if pressed:
+
+- **Do not describe it as a retreat.** The rejected alternative was inducing imbalance by
+  downsampling the balanced data, which would have preserved the original datasets and the
+  comparability with prior work. You turned that down because downsampling produces a
+  minority class that is smaller but statistically unchanged in character. That is the
+  stronger version of the argument: you had a way to keep the specification and declined it
+  on methodological grounds.
+- **The finding vindicates the choice.** The mechanism in Section 6.8 depends on prevalence
+  being genuine. Under induced imbalance you would have been measuring the interaction
+  between resampling and an artificial prevalence you had imposed yourself.
+
+## On the word count
+
+The reviewer measured 3,141 words; I measure 3,406 for the chapter body excluding these
+notes, which is close enough that the difference is probably table cells. Either way the
+expansion of Section 7.7 adds roughly 300 words, so expect around 3,700. The reviewer's
+judgement that the length is earned and nothing should be cut still holds at that figure.
