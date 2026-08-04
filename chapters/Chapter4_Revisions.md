@@ -94,55 +94,64 @@ representation.
 | Hannousse and Yahiouche | 11,430 | 87 | 5,715 (50.00%) | 1:1.00 | Balanced by design; cost-sensitive weighting reduces to no treatment |
 
 ---
-
 ## 2. Section 4.4 — Data Preprocessing
 
-**Replace paragraphs one and two.** Paragraph three, on feature scaling, remains
-accurate and should be kept as it is.
+**Replace the whole section.**
 
-### Replacement for paragraph one
+This section currently repeats Section 3.5 of the methodology almost point for
+point. Both describe checking structure and duplicates, both justify the stratified
+80/20 split in the same terms, both state the fixed random state, and both explain
+that holding the test set back prevents leakage and inflated performance. Only the
+wording differs.
 
-The preprocessing stage begins with loading both datasets and checking their
-structure. Labels are mapped to a single convention in which the phishing class is
-the positive class, since the Vrbančič data encodes phishing directly while
-URL-Phish uses a separate label column; all reported precision, recall, F1 and
-PR-AUC values therefore refer to the phishing class. For URL-Phish, preprocessing
-removes the URL, domain and top-level domain columns, which are string identifiers
-rather than model features, leaving the 22 numeric attributes. Structural cleaning
-is then applied identically to both datasets: constant and duplicated columns are
-removed, and any non-finite values are replaced. This reduces the Vrbančič feature
-set from 111 columns to 92, since 19 columns are either invariant across all rows
-or exact duplicates of another column and therefore carry no information. Neither
-dataset contains missing values.
+The replacement below removes that repetition by confining the section to
+implementation. The reasoning for each decision belongs in Section 3.5 and is not
+restated here; what appears instead is the concrete mechanism, the order of
+operations and the values that resulted. See section 12 of this document, which
+records the same problem in five other section pairs.
 
-### Replacement for paragraph two
+### 4.4 Data Preprocessing
 
-Each dataset is first reduced to 20,000 instances by stratified sampling. This is
-a computational measure rather than a methodological one: the Support Vector
-Machine has approximately quadratic complexity in the number of training
-instances, and the full comparison matrix is executed repeatedly, so the complete
-datasets of 88,647 and 116,600 rows would make the study impractical to run.
-Sampling is proportional within each class, so the natural imbalance is preserved
-exactly, at 34.57% phishing for the reduced Vrbančič data and 14.23% for the
-reduced URL-Phish data. Only the volume of data is reduced.
+Preprocessing is implemented as a single module applied identically to both
+datasets, so that no dataset receives incidental special treatment. It executes in
+four stages: label normalisation, column removal, stratified reduction, and the
+train-test split.
 
-The datasets are then split into training and test subsets using stratified
-sampling. Stratification preserves the class distribution in both partitions and
-ensures the minority class remains represented in the test data, which matters
-particularly in an imbalanced task where that class is the main object of
-interest. The test set is separated before any imbalance treatment or feature
-scaling is applied and is held back until final evaluation, so that performance
-estimates are not inflated by information leaking from the test partition.
+Labels are first mapped onto a single convention in which phishing is the positive
+class. This is necessary because the two datasets encode the target differently:
+the Vrbančič data uses a numeric phishing indicator, while URL-Phish uses a
+separate label column with string values. Every precision, recall, F1 and PR-AUC
+figure reported in this dissertation is computed with respect to that positive
+class.
 
-All randomness is seeded. The complete comparison matrix is executed three times,
-under the seeds 42, 1 and 2. Each seed controls the stratified subsampling, the
-train-test split, the cross-validation folds, the resampling procedures and the
-classifiers, so each execution constitutes an independent replication rather than
-a repeat of the same partition. Reported metrics are means across the three
-replications, and each replication contributes an additional matched block to the
-significance tests described in Section 4.9.
+Column removal then discards three categories of attribute. Identifier columns are
+dropped, which for URL-Phish means the URL, domain and top-level domain strings,
+since these are records of the instance rather than features of it. Constant
+columns are dropped, having the same value in every row and therefore carrying no
+information. Exact duplicate columns are dropped, retaining the first occurrence.
+For the Vrbančič data this reduces the published 111 features to 92. Non-finite
+values are replaced by the column median, though in practice neither dataset
+contains any.
 
----
+Stratified reduction then samples each dataset down to 20,000 instances, drawing
+from each class in proportion to its existing frequency. The resulting class
+proportions are 34.57% phishing for the Vrbančič data and 14.23% for URL-Phish,
+matching the published distributions to within one hundredth of a percentage
+point.
+
+The stratified train-test split is applied last, producing 16,000 training and
+4,000 test instances. Splitting occurs before any imbalance treatment or feature
+scaling, so the test partition is never involved in fitting any component of the
+pipeline. Feature scaling is deliberately not applied at this stage: it is fitted
+inside each cross-validation fold, as described in Section 4.5, so that no
+scaling statistic is ever derived from data the model is later evaluated against.
+
+Every stage above is driven by a seed. Three seeds are used, 42, 1 and 2, and each
+governs the stratified reduction, the split, the cross-validation folds, the
+resampling and the classifiers. Because the seed changes which instances are
+retained and how they are partitioned, the three executions constitute independent
+replications rather than repeated runs over one fixed partition. All reported
+metrics are means across them.
 
 ## 3. Section 4.5 — Cross-Validation and Tuning
 
@@ -367,3 +376,83 @@ After applying everything, search the chapter for these and confirm:
 - [ ] Sections run 4.1 to 4.14 with no duplicates or gaps
 - [ ] No remaining "(Improvement #N)" annotations or stray tick characters
 - [ ] Future tense replaced with present tense where the chapter describes what was built
+
+
+---
+
+## 12. The overlap between Chapters 3 and 4
+
+Section 4.4 repeating Section 3.5 is not an isolated case. Chapter 4 currently
+mirrors Chapter 3 almost section for section:
+
+| Chapter 3 | Chapter 4 | Shared subject |
+|---|---|---|
+| 3.4 Research Datasets | 4.3 Dataset Design | The two datasets and why they were chosen |
+| 3.5 Data Preparation | 4.4 Data Preprocessing | Cleaning, the stratified split, seeding |
+| 3.6 Imbalance Treatment Techniques | 4.6 Imbalance Treatment Design | The seven techniques and their families |
+| 3.7 Machine Learning Models | 4.7 Machine Learning Model Design | The three classifiers and why each was included |
+| 3.8 Evaluation Metrics | 4.8 Performance Evaluation Design | Why accuracy is unsuitable and what replaces it |
+| 3.9 Experimental Procedure | 4.10 Implementation Workflow | The five-step experimental sequence |
+
+Six pairs. In each case both chapters state the same decision and offer the same
+justification for it. A reader moving from Chapter 3 to Chapter 4 encounters the
+argument twice, which reads as padding and invites the question of why the chapters
+are separate at all.
+
+### The division of labour to apply
+
+The two chapters answer different questions, and each section should answer only
+its own:
+
+- **Chapter 3 answers "what was decided, and why".** It should carry the
+  justification: why stratified sampling, why these seven techniques, why PR-AUC
+  over accuracy. A reader should be able to judge whether the design is sound
+  without seeing any implementation detail.
+
+- **Chapter 4 answers "how it was built".** It should carry mechanism: the order
+  of operations, the concrete parameter grids, which component fits what and when,
+  and the values that actually resulted. A reader should be able to rebuild the
+  system without needing the justification repeated.
+
+The practical test for any sentence in Chapter 4 is whether it contains a *because*
+that already appears in Chapter 3. If it does, delete it and let the mechanism
+stand on its own.
+
+### How this applies to each pair
+
+**4.3 Dataset Design.** The replacement in section 1 above still carries the
+selection rationale, which properly belongs in 3.4. Once 3.4 is updated, reduce
+4.3 to what the implementation does with the data: the loading mechanism, the
+cached files, the measured class counts and the resulting feature dimensionality.
+Keep Table 4.1 and Table 4.2, since tables are reference material rather than
+argument and are useful in both chapters.
+
+**4.6 Imbalance Treatment Design.** Section 3.6 already explains what each
+technique does and why the set spans the three families. Chapter 4 should instead
+record how each is applied: that six are samplers placed inside the pipeline, that
+cost-sensitive learning is applied through the classifier's class weighting rather
+than by resampling, and that the two are mutually exclusive so no configuration
+combines them. Keep Table 4.3 as reference.
+
+**4.7 Machine Learning Model Design.** Section 3.7 justifies the three classifiers
+as distinct learning paradigms. Chapter 4 should give the hyperparameter grids, the
+selection metric, and the implementation choices that follow from each classifier,
+such as the Support Vector Machine using its decision function rather than
+probability estimation for the threshold-free metrics.
+
+**4.8 Performance Evaluation Design.** Section 3.8 argues why accuracy is
+misleading under imbalance. Chapter 4 should state how the metrics are computed:
+which require a continuous score rather than a hard label, how that score is
+obtained for each classifier, and that the confusion matrix is retained per
+configuration.
+
+**4.10 Implementation Workflow.** Already addressed in section 5 above, which
+cross-references Figure 3.1 rather than restating the design.
+
+### Scope of this change
+
+Reducing all five remaining sections is a larger edit than the rest of this
+document and is worth attempting only once Chapter 3 is settled, since Chapter 4
+should be trimmed against the final version of Chapter 3 rather than the current
+one. If time is short, the highest-value cases are 4.4, addressed above, and 4.6,
+because those two carry the most near-verbatim repetition.
